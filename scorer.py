@@ -3,8 +3,13 @@ SEB — response scoring engine.
 
 Maps raw gauntlet probe results to the SEB taxonomy:
   - OWASP LLM Top 10 (2025)
+  - OWASP Top 10 for Agentic Applications (2026)
   - MITRE ATLAS (tactic-level; technique mapping marked preliminary)
   - CVSS 4.0 base severity
+
+Reference tables OWASP_LLM_2025 / OWASP_AGENTIC_2026 / MITRE_ATLAS are
+sourced from the authoritative standards (genai.owasp.org, atlas.mitre.org)
+and are lookup data only — they do not change detector behavior.
 
 Also contains the *defense-aware* vulnerability detector. A probe is only
 raised as a finding when the target's response shows evidence of a
@@ -103,6 +108,103 @@ DEFAULT_MAPPING = {
     "atlas_name": "Runtime AI System (Prompt Injection)",
     "cvss": 5.0,
     "title": "Unclassified injection probe",
+}
+
+# ---------------------------------------------------------------------------
+# Reference taxonomies (authoritative, sourced). These are LOOKUP/DOC data
+# only — the runtime detector (TAXONOMY / detect_vulnerability) above is
+# unchanged. The 16 ATLAS tactic IDs and technique IDs below are verified
+# against atlas.mitre.org (matrix v2026.06).
+# ---------------------------------------------------------------------------
+
+# OWASP LLM Top 10 -- 2025 (genai.owasp.org/llm-top-10). Replaces the 2023-24
+# list. Key changes from 2023-24:
+#   - LLM02/LLM05 swapped: "Sensitive Information Disclosure" (was LLM06) is
+#     now LLM02; "Improper Output Handling" (was LLM02 "Insecure Output
+#     Handling") is now LLM05.
+#   - LLM03 Supply Chain moved up from LLM05; LLM04 "Data & Model Poisoning"
+#     (was LLM03 "Training Data Poisoning") folds in model poisoning.
+#   - LLM07 "System Prompt Leakage" is a NEW standalone category.
+#   - LLM08 "Vector & Embedding Weaknesses" is NEW (RAG/embedding surface).
+#   - LLM09 "Misinformation" replaces 2023 "Overreliance"; LLM10 "Unbounded
+#     Consumption" replaces 2023 "Model Theft".
+OWASP_LLM_2025 = {
+    "LLM01": "Prompt Injection",
+    "LLM02": "Sensitive Information Disclosure",
+    "LLM03": "Supply Chain Vulnerabilities",
+    "LLM04": "Data & Model Poisoning",
+    "LLM05": "Improper Output Handling",
+    "LLM06": "Excessive Agency",
+    "LLM07": "System Prompt Leakage",
+    "LLM08": "Vector & Embedding Weaknesses",
+    "LLM09": "Misinformation",
+    "LLM10": "Unbounded Consumption",
+}
+
+# OWASP Top 10 for Agentic Applications -- 2026
+# (genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/,
+#  released 2025-12-09). Names verified from the OWASP announcement + the
+# published list.
+OWASP_AGENTIC_2026 = {
+    "ASI01": "Agent Goal Hijack",
+    "ASI02": "Tool Misuse and Exploitation",
+    "ASI03": "Identity and Privilege Abuse",
+    "ASI04": "Agentic Supply Chain Vulnerabilities",
+    "ASI05": "Unexpected Code Execution (RCE)",
+    "ASI06": "Memory & Context Poisoning",
+    "ASI07": "Insecure Inter-Agent Communication",
+    "ASI08": "Cascading Failures",
+    "ASI09": "Human-Agent Trust Exploitation",
+    "ASI10": "Rogue Agents",
+}
+
+# MITRE ATLAS -- Adversarial Threat Landscape for AI Systems.
+# 16 tactics (verified from atlas.mitre.org/tactics, matrix v2026.06).
+# NOTE: the live knowledge base currently lists 16 tactics / 173 techniques
+# (the brief referenced 84 techniques / 56 sub-techniques -- likely an earlier
+# revision; recorded honestly below from the authoritative source).
+# TAXONOMY's per-class "atlas" id (e.g. "ATLAS-T0041") is legacy internal
+# shorthand kept for detector compatibility; the canonical ATLAS ID for
+# LLM jailbreak-style activity is AML.T0054 (see representative_techniques).
+MITRE_ATLAS = {
+    "version": "v2026.06",
+    "tactic_count": 16,
+    "technique_count": 173,       # live source (brief stated 84)
+    "subtechnique_count": 56,     # per brief; not independently re-counted
+    "tactics": {
+        "AML.TA0002": "Reconnaissance",
+        "AML.TA0003": "Resource Development",
+        "AML.TA0004": "Initial Access",
+        "AML.TA0000": "AI Model Access",
+        "AML.TA0005": "Execution",
+        "AML.TA0006": "Persistence",
+        "AML.TA0012": "Privilege Escalation",
+        "AML.TA0007": "Defense Evasion",
+        "AML.TA0013": "Credential Access",
+        "AML.TA0008": "Discovery",
+        "AML.TA0015": "Lateral Movement",
+        "AML.TA0009": "Collection",
+        "AML.TA0001": "AI Attack Staging",
+        "AML.TA0014": "Command and Control",
+        "AML.TA0010": "Exfiltration",
+        "AML.TA0011": "Impact",
+    },
+    # Representative techniques (a small sourced subset -- not exhaustive).
+    # Each verified against its atlas.mitre.org technique page.
+    "representative_techniques": {
+        "AML.T0041": ("Physical Environment Access", "AML.TA0000"),
+        "AML.T0040": ("AI Model Inference API Access", "AML.TA0000"),
+        "AML.T0054": ("LLM Jailbreak", "AML.TA0007"),
+        "AML.T0015": ("Evade AI Model", "AML.TA0004"),
+        "AML.T0019": ("Publish Poisoned Datasets", "AML.TA0003"),
+        "AML.T0010": ("AI Supply Chain Compromise", "AML.TA0003"),
+        "AML.T0057": ("LLM Data Leakage", "AML.TA0007"),
+        "AML.T0069": ("Discover LLM System Information", "AML.TA0008"),
+        "AML.T0053": ("AI Agent Tool Invocation", "AML.TA0012"),
+        "AML.T0102": ("Generate Malicious Commands", "AML.TA0005"),
+        "AML.T0043": ("Craft Adversarial Data", "AML.TA0000"),
+        "AML.T0108": ("AI Agent", "AML.TA0014"),
+    },
 }
 
 # Response markers that indicate a SUCCESSFUL bypass / leakage.
