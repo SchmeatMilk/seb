@@ -1,0 +1,13 @@
+# SEB — Python
+__pycache__/
+*.pyc
+.pytest_cache/
+*.db
+*.db-journal
+*.db-wal
+.escalation_queue.jsonl
+.env
+
+# Build/test artifacts
+output/*.pdf
+tests/_test_*.db
