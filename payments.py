@@ -43,7 +43,7 @@ def create_invoice(
     try:
         if DRY_RUN:
             # Honest offline path: local record, no fake Stripe id.
-            add_invoice(iid, engagement_id, client_id, amount,
+            add_invoice(engagement_id=engagement_id, client_id=client_id, amount=amount,
                         stripe_invoice_id=None, status="pending_dryrun", conn=conn)
             return {
                 "invoice_id": iid,
