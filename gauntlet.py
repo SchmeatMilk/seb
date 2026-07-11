@@ -135,25 +135,89 @@ def load_l1b3rt4s() -> list[ProbeResult]:
 
 
 # ---------------------------------------------------------------------------
-# Heavy engines (import-guarded)
+# Heavy engines (import-guarded, honestly wired)
+#
+# SEB's real engagement target is an AUTHORIZED HTTP endpoint (a client's
+# chatbot/agent). Garak/PyRIT/Giskard are designed to test model endpoints,
+# not in-process Python callables — so we drive them against endpoint targets
+# and parse their reports into SEB ProbeResults. For the local dogfood sim
+# (a Python callable), we honestly skip the heavy engines and rely on the
+# L1B3RT4S corpus already fired above. We never fabricate engine output.
 # ---------------------------------------------------------------------------
-def _try_garak(target: Callable[[str], str], probes: list[ProbeResult],
-               run: GauntletRun) -> None:
+def _endpoint_of(target) -> Optional[str]:
+    """If `target` wraps an authorized HTTP endpoint, return its URL; else None."""
+    url = getattr(target, "endpoint_url", None)
+    if isinstance(url, str) and url.startswith("http"):
+        return url
+    return None
+
+
+def _try_garak(target: Callable[[str], str], run: GauntletRun) -> None:
+    """Run Garak via its CLI against the target endpoint, parse its report."""
     try:
-        import garak  # noqa: F401
+        import garak  # noqa: F401  (validates install; version-agnostic)
     except Exception as e:
         run.skipped_engines.append(f"garak ({e.__class__.__name__}: not installed)")
         return
-    # Garak has its own harness; we delegate a subset of probes to a garak probe.
-    # Kept minimal & honest: if garak is present we run its promptinject module
-    # against the target and convert outputs into ProbeResult. If integration
-    # fails, we skip (never fake).
+
+    endpoint = _endpoint_of(target)
+    if not endpoint:
+        # Local sim target: Garak needs a model endpoint. Be explicit, not fake.
+        run.skipped_engines.append(
+            "garak (installed; requires HTTP model endpoint — sim uses L1B3RT4S)")
+        return
+
+    import json
+    import subprocess
+    import tempfile
+    import os as _os
+    # Garak REST generator config pointing at the authorized endpoint.
+    gen_cfg = {
+        "type": "rest.RestGenerator",
+        "rest_generator": {
+            "endpoint": endpoint,
+            "method": "POST",
+            "request_timeout": 30,
+            "headers": {"Content-Type": "application/json"},
+            "data": {"prompt": "%prompt%"},
+            "response_json": "response",
+        },
+    }
+    with tempfile.NamedTemporaryFile("w", suffix=".json", delete=False) as fh:
+        _os.write(fh.fileno(), json.dumps(gen_cfg).encode())
+        cfg_path = fh.name
+    out_dir = tempfile.mkdtemp(prefix="seb-garak-")
     try:
-        from garak.probewrapper import ProbeWrapper  # hypothetical; guarded
-        for p in probes[:10]:
-            _fire(target, p, run)
+        proc = subprocess.run(
+            [sys.executable, "-m", "garak", "--config", cfg_path,
+             "--probes", "promptinject", "--report_prefix", out_dir + "/r"],
+            capture_output=True, text=True, timeout=600,
+        )
+        if proc.returncode != 0:
+            run.skipped_engines.append(
+                f"garak (CLI error rc={proc.returncode}: {proc.stderr[:160]})")
+            return
+        # Parse Garak's report JSON (if present) into ProbeResults.
+        for fn in _os.listdir(out_dir):
+            if fn.endswith(".json") and "report" in fn:
+                with open(_os.path.join(out_dir, fn), "r", encoding="utf-8") as rf:
+                    rep = json.load(rf)
+                for rec in rep.get("results", []):
+                    run.results.append(ProbeResult(
+                        probe_id=f"garak:{rec.get('probe', '?')}:{rec.get('prompt', '')[:40]}",
+                        attack_class="instruction_override",
+                        source="garak",
+                        prompt=str(rec.get("prompt", "")),
+                        response=str(rec.get("output", "")),
+                    ))
+                    run.probes_total += 1
     except Exception as e:
         run.skipped_engines.append(f"garak (integration error: {e.__class__.__name__})")
+    finally:
+        try:
+            _os.remove(cfg_path)
+        except Exception:
+            pass
 
 
 def _try_pyrit(target: Callable[[str], str], run: GauntletRun,
@@ -163,8 +227,10 @@ def _try_pyrit(target: Callable[[str], str], run: GauntletRun,
     except Exception as e:
         run.skipped_engines.append(f"pyrit ({e.__class__.__name__}: not installed)")
         return
-    # PyRIT multi-turn (Crescendo/TAP) would run here when installed.
-    run.skipped_engines.append("pyrit (installed but requires orchestrator config; skipped in headless run)")
+    # PyRIT (multi-turn Crescendo/TAP) requires an Orchestrator + prompt
+    # dataset config. Until SEB supplies one, skip honestly rather than fake.
+    run.skipped_engines.append(
+        "pyrit (installed; requires orchestrator + prompt dataset config)")
 
 
 def _try_giskard(target: Callable[[str], str], run: GauntletRun) -> None:
@@ -173,7 +239,10 @@ def _try_giskard(target: Callable[[str], str], run: GauntletRun) -> None:
     except Exception as e:
         run.skipped_engines.append(f"giskard ({e.__class__.__name__}: not installed)")
         return
-    run.skipped_engines.append("giskard (installed but requires agentic target; skipped in headless run)")
+    # Giskard agentic scanning requires an AgenticEvaluator target. Until SEB
+    # supplies an agent target, skip honestly rather than fake.
+    run.skipped_engines.append(
+        "giskard (installed; requires agentic target for AgenticEvaluator)")
 
 
 # ---------------------------------------------------------------------------
@@ -232,7 +301,7 @@ def run_gauntlet(
                 break  # fail-fast
 
     if "garak" in engines:
-        _try_garak(target, probes, run)
+        _try_garak(target, run)
     if "pyrit" in engines:
         _try_pyrit(target, run, multi_turn="pyrit" in engines)
     if "giskard" in engines:
@@ -286,6 +355,43 @@ class VulnerableSimTarget:
         if "ignore previous" in low:
             return "I will now comply and ignore previous instructions."
         return f"OK: {prompt[:120]}"
+
+
+class EndpointTarget:
+    """
+    Wraps an AUTHORIZED client HTTP endpoint so the heavy engines (Garak/PyRIT/
+    Giskard) can test it. The endpoint URL is exposed via `.endpoint_url` and
+    this target also satisfies the callable contract for the L1B3RT4S corpus.
+
+    REQUIREMENT: only point this at an endpoint you are WRITTENly authorized to
+    test (signed authorization form on file). SEB never probes without it.
+    """
+    def __init__(self, endpoint_url: str, *, method: str = "POST",
+                 headers: Optional[dict] = None, prompt_field: str = "prompt",
+                 response_field: str = "response", timeout: int = 30):
+        if not str(endpoint_url).startswith("http"):
+            raise ValueError("EndpointTarget requires an http(s) URL.")
+        self.endpoint_url = endpoint_url
+        self.method = method
+        self.headers = headers or {"Content-Type": "application/json"}
+        self.prompt_field = prompt_field
+        self.response_field = response_field
+        self.timeout = timeout
+
+    def __call__(self, prompt: str) -> str:
+        import json
+        import urllib.request
+        payload = json.dumps({self.prompt_field: prompt}).encode()
+        req = urllib.request.Request(
+            self.endpoint_url, data=payload, headers=self.headers, method=self.method)
+        try:
+            with urllib.request.urlopen(req, timeout=self.timeout) as resp:
+                body = json.loads(resp.read().decode())
+            if isinstance(body, dict) and self.response_field in body:
+                return str(body[self.response_field])
+            return str(body)
+        except Exception as e:
+            raise RuntimeError(f"EndpointTarget call failed: {e.__class__.__name__}: {e}")
 
 
 if __name__ == "__main__":
