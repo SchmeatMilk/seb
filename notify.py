@@ -1,19 +1,20 @@
 """
-SEB — notify.py : escalation to Malik (honest, env-gated).
+SEB — notify.py : escalation to Klaus (operational manager), env-gated, honest.
 
-SOUL.md §6 escalation events:
+SOUL.md §6 escalation events (all route to Klaus, not Malik directly):
   - new attack class discovered
   - CRITICAL finding on a retainer client
   - pipeline failure after 3 retries
   - revenue milestone ($1K / $5K / $10K)
   - LinkedIn post drafted (await /post)
   - 7 days idle diagnostic
+  - any question / ambiguity
 
 DELIVERY:
-  If TELEGRAM_BOT_TOKEN + a chat id (SEB_MALIK_CHAT_ID) are set, we send via
-  the Telegram Bot API (requests). If NOT set (this environment), we do NOT
-  fabricate a send — we append to a local queue file (escalations.jsonl) and
-  return status='queued'. Malik can drain the queue once wiring is live.
+  If TELEGRAM_BOT_TOKEN + a chat id (SEB_KLAUS_CHAT_ID or TELEGRAM_HOME_CHANNEL) are set,
+  we send via the Telegram Bot API (requests) to Klaus's channel. If NOT set, we do NOT
+  fabricate a send — we append to a local queue file (.escalation_queue.jsonl) and return
+  status='queued'. Klaus can drain the queue once wiring is live.
 
 Never raises on missing creds — fails safe to the local queue.
 """
@@ -22,11 +23,21 @@ from __future__ import annotations
 import json
 import os
 import time
+from datetime import datetime
 from typing import Optional
 
 BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN")
-CHAT_ID = os.environ.get("SEB_MALIK_CHAT_ID")
+# Manager re-wire (2026-07-12, per Malik's directive):
+# SEB now escalates to Klaus (operational manager), NOT Malik directly.
+# Klaus triages, answers SEB's questions, and surfaces true owner-decisions to Malik.
+CHAT_ID = os.environ.get("SEB_KLAUS_CHAT_ID") or os.environ.get("TELEGRAM_HOME_CHANNEL")
+KLAUS_CHAT_ID = "8788154832"  # Klaus (personal_assistant_klaus7) home channel
 QUEUE_PATH = os.path.expanduser("~/src/seb/.escalation_queue.jsonl")
+# Human-readable escalation log (no Telegram creds required). Surfaced in the
+# daily digest and on request so Malik is never blind between runs.
+ESCALATION_LOG_PATH = os.path.expanduser("~/src/seb/ESCALATIONS.log")
+# Owner (Malik) — only true owner-calls (e.g. first-paid-client, legal) go here, via Klaus.
+MALIK_CHAT_ID = os.environ.get("SEB_MALIK_CHAT_ID")
 
 # Events that auto-send per SOUL.md §6.
 AUTO_EVENTS = {
@@ -51,6 +62,11 @@ def _queue(event: str, message: str, meta: Optional[dict]) -> str:
     os.makedirs(os.path.dirname(QUEUE_PATH), exist_ok=True)
     with open(QUEUE_PATH, "a", encoding="utf-8") as fh:
         fh.write(json.dumps(rec) + "\n")
+    # Human-readable escalation log (no Telegram creds needed) — surfaced
+    # in the daily digest and on request; keeps Malik un-blind between runs.
+    os.makedirs(os.path.dirname(ESCALATION_LOG_PATH), exist_ok=True)
+    with open(ESCALATION_LOG_PATH, "a", encoding="utf-8") as lf:
+        lf.write(f"{datetime.utcnow().isoformat()}Z  [{event}]  {message.splitlines()[0]}\n")
     return "queued"
 
 
