@@ -1,0 +1,18 @@
+[build-system]
+requires = ["setuptools>=64", "wheel"]
+build-backend = "setuptools.backends._legacy:_Backend"
+
+[project]
+name = "seb-scan"
+version = "0.1.0"
+description = "Secure Environment Basics — CLI domain risk scanner for AI-security surface assessment"
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.10"
+authors = [{name = "SEB (Security Inquisitor Balance)", email = "mbaptiste20@gmail.com"}]
+
+[project.scripts]
+seb = "seb:main"
+
+[tool.setuptools.packages.find]
+include = ["seb*"]

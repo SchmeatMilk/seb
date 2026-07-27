@@ -1,0 +1,368 @@
+#!/usr/bin/env python3
+"""SEB — Secure Environment Basics. CLI domain risk scanner.
+
+Usage:
+  seb scan example.com            # Full scan, pretty-print
+  seb scan example.com --json     # JSON output
+  seb scan example.com --quick    # Headers + AI surface only (faster)
+  seb --help                      # This help
+
+MIT License — see LICENSE.
+"""
+
+import argparse
+import json
+import os
+import re
+import ssl
+import sys
+import socket
+import urllib.request
+import urllib.error
+from datetime import datetime, timezone
+from typing import Optional
+
+__version__ = "0.1.0"
+
+# ── Output styling ──────────────────────────────────────────────────────────
+GREEN = "\033[92m"
+YELLOW = "\033[93m"
+RED = "\033[91m"
+CYAN = "\033[96m"
+BOLD = "\033[1m"
+RESET = "\033[0m"
+
+
+def _ok(txt): return f"{GREEN}{txt}{RESET}"
+def _warn(txt): return f"{YELLOW}{txt}{RESET}"
+def _fail(txt): return f"{RED}{txt}{RESET}"
+def _info(txt): return f"{CYAN}{txt}{RESET}"
+
+
+# ── Checks ───────────────────────────────────────────────────────────────────
+
+SECURITY_HEADERS = {
+    "Strict-Transport-Security": {
+        "good": lambda v: "max-age" in v and "includeSubDomains" in v,
+        "warn": lambda v: "max-age" in v,
+        "label": "HSTS",
+        "desc": "Forces HTTPS; includeSubDomains recommended",
+    },
+    "Content-Security-Policy": {
+        "good": lambda v: len(v) > 30,
+        "warn": lambda v: bool(v),
+        "label": "CSP",
+        "desc": "Mitigates XSS; a restrictive policy is ideal",
+    },
+    "X-Frame-Options": {
+        "good": lambda v: v.upper() in ("DENY", "SAMEORIGIN"),
+        "warn": lambda v: bool(v),
+        "label": "X-Frame-Options",
+        "desc": "Prevents clickjacking; DENY or SAMEORIGIN",
+    },
+    "X-Content-Type-Options": {
+        "good": lambda v: "nosniff" in v,
+        "warn": lambda v: bool(v),
+        "label": "X-Content-Type-Options",
+        "desc": "Prevents MIME-sniffing; should be 'nosniff'",
+    },
+    "Referrer-Policy": {
+        "good": lambda v: v.strip() in ("strict-origin-when-cross-origin", "same-origin", "no-referrer"),
+        "warn": lambda v: bool(v),
+        "label": "Referrer-Policy",
+        "desc": "Controls referrer leakage",
+    },
+    "Permissions-Policy": {
+        "good": lambda v: len(v) > 10,
+        "warn": lambda v: bool(v),
+        "label": "Permissions-Policy",
+        "desc": "Restricts browser feature access",
+    },
+}
+
+AI_SURFACES = [
+    ("/.well-known/ai-plugin.json", "ChatGPT Plugin manifest"),
+    ("/openapi.json", "OpenAPI spec"),
+    ("/api/openapi.json", "OpenAPI spec (alt path)"),
+    ("/mcp.json", "MCP (Model Context Protocol) config"),
+    ("/.well-known/mcp.json", "MCP (well-known path)"),
+    ("/llms.txt", "LLM instructions file"),
+    ("/llms-full.txt", "LLM full instructions"),
+    ("/robots.txt", "Robots.txt (may reveal AI crawler rules)"),
+]
+
+AI_WIDGET_PATTERNS = [
+    (r"intercom", "Intercom (AI-Chat)"),
+    (r"drift\.com|dynamicgo", "Drift (AI-Chat)"),
+    (r"tawk\.to|tawkto", "Tawk.to (Chat)"),
+    (r"crisp\.chat|client\.crisp", "Crisp (Chat)"),
+    (r"tidio|tidiochat", "Tidio (AI-Chat)"),
+    (r"ada\.support", "Ada (AI-Automation)"),
+    (r"chatfuel", "Chatfuel (AI-Chat)"),
+    (r"manychat", "ManyChat (AI-Chat)"),
+    (r"yellow\.ai", "Yellow.ai (AI-Automation)"),
+    (r"zendesk|zdassets|webwidget", "Zendesk (Support)"),
+    (r"livechatinc|livechat", "LiveChat (Chat)"),
+    (r"hs-script|hubspot", "HubSpot (CRM)"),
+    (r"forethought", "Forethought (AI-Support)"),
+    (r"hellotars\.com|tars\.com", "Tars (AI-Chat)"),
+]
+
+
+def fetch_url(url: str, timeout: int = 10) -> tuple[Optional[int], Optional[dict], Optional[str]]:
+    """GET a URL; returns (status_code, headers_dict, body_preview)."""
+    req = urllib.request.Request(
+        url,
+        headers={
+            "User-Agent": "seb-scan/0.1 (security-assessment-tool; https://github.com/SchmeatMilk/seb)",
+            "Accept": "text/html,application/json,*/*",
+        },
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=timeout) as resp:
+            status = resp.status
+            headers = dict(resp.headers)
+            body = resp.read(5000).decode("utf-8", errors="replace")
+            return status, headers, body
+    except urllib.error.HTTPError as e:
+        return e.code, dict(e.headers), None
+    except (urllib.error.URLError, socket.timeout, OSError) as e:
+        return None, None, None
+
+
+def check_security_headers(headers: dict) -> list[dict]:
+    """Score each known security header."""
+    results = []
+    if not headers:
+        return [{"header": h["label"], "status": "fail", "detail": "No response headers", "score": 0}
+                for h in SECURITY_HEADERS.values()]
+
+    for header, spec in SECURITY_HEADERS.items():
+        raw = headers.get(header.lower(), headers.get(header, ""))
+        if not raw:
+            results.append({"header": spec["label"], "status": "fail",
+                            "detail": f"Missing — {spec['desc']}", "score": 0})
+        elif spec["good"](raw):
+            results.append({"header": spec["label"], "status": "pass",
+                            "detail": raw[:80], "score": 10})
+        elif spec["warn"](raw):
+            results.append({"header": spec["label"], "status": "warn",
+                            "detail": f"Weak — {raw[:80]}", "score": 5})
+        else:
+            results.append({"header": spec["label"], "status": "fail",
+                            "detail": raw[:80], "score": 0})
+    return results
+
+
+def check_ai_surfaces(domain: str) -> list[dict]:
+    """Probe common AI/LLM endpoint paths."""
+    results = []
+    for path, label in AI_SURFACES:
+        url = f"https://{domain}{path}"
+        status, headers, body = fetch_url(url, timeout=5)
+        if status and status < 400:
+            results.append({"path": path, "label": label, "status": "found",
+                            "status_code": status, "detail": (body or "")[:120]})
+        elif status and status == 403:
+            results.append({"path": path, "label": label, "status": "blocked",
+                            "status_code": 403, "detail": "Access forbidden (403)"})
+        else:
+            results.append({"path": path, "label": label, "status": "not_found",
+                            "status_code": status, "detail": ""})
+    return results
+
+
+def check_ai_widgets(body: str) -> list[dict]:
+    """Scan HTML for known AI/chat widget signatures."""
+    results = []
+    if not body:
+        return results
+    for pattern, label in AI_WIDGET_PATTERNS:
+        if re.search(pattern, body, re.IGNORECASE):
+            results.append({"widget": label, "status": "detected"})
+    return results
+
+
+def check_ssl(domain: str) -> dict:
+    """Quick SSL/TLS check via socket."""
+    try:
+        ctx = ssl.create_default_context()
+        with socket.create_connection((domain, 443), timeout=8) as sock:
+            with ctx.wrap_socket(sock, server_hostname=domain) as ssock:
+                cert = ssock.getpeercert()
+                if not cert:
+                    return {"status": "warn", "detail": "No certificate info", "score": 5}
+                not_after = cert.get("notAfter", "")
+                return {"status": "pass", "detail": f"Valid cert, expires {not_after}", "score": 10}
+    except Exception as e:
+        return {"status": "fail", "detail": str(e)[:100], "score": 0}
+
+
+# ── Scoring ──────────────────────────────────────────────────────────────────
+
+HEADER_MAX = 60  # 6 headers × 10
+SSL_MAX = 10
+AI_SURFACE_RISK = 15  # found surfaces increase risk score (inverted in final)
+WIDGET_BONUS = 15     # detected AI widgets
+
+MAX_SCORE = HEADER_MAX + SSL_MAX + WIDGET_BONUS  # 85 base; surfaces subtract
+
+
+def compute_score(results: dict) -> dict:
+    h_score = sum(r["score"] for r in results.get("headers", []))
+    ssl_score = results.get("ssl", {}).get("score", 0)
+
+    # AI surfaces found = higher attack surface = lower security score
+    found_surfaces = [r for r in results.get("ai_surfaces", []) if r["status"] == "found"]
+    surface_penalty = min(len(found_surfaces) * 5, AI_SURFACE_RISK)
+
+    # AI widgets detected = more AI attack surface
+    widget_count = len(results.get("ai_widgets", []))
+    widget_bonus = min(widget_count * 3, WIDGET_BONUS)
+
+    raw = h_score + ssl_score + widget_bonus - surface_penalty
+    final = max(0, min(100, raw))
+
+    return {
+        "score": final,
+        "breakdown": {
+            "security_headers": f"{h_score}/{HEADER_MAX}",
+            "ssl_tls": f"{ssl_score}/{SSL_MAX}",
+            "surface_penalty": f"-{surface_penalty}",
+            "ai_widgets_detected": f"+{widget_bonus}",
+            "total": f"{final}/100",
+        },
+    }
+
+
+# ── Output ────────────────────────────────────────────────────────────────────
+
+def print_header(domain: str, version: str):
+    print(f"\n{BOLD}SEB — Secure Environment Basics{RESET} v{version}")
+    print(f"{_info('Target:')} {domain}")
+    print(f"{_info('Time:')}   {datetime.now(timezone.utc).isoformat()}")
+    print()
+
+
+def print_table(title: str, items: list, cols: list, status_fn):
+    if not items:
+        print(f"  {_warn('(none)')}")
+        return
+    for item in items:
+        status = item.get("status", "?")
+        label = item.get(cols[0], "?")
+        detail = item.get(cols[1], "")
+        print(f"  {status_fn(status)} {_info(label)} | {detail}")
+
+
+def print_results(domain: str, results: dict):
+    print_header(domain, __version__)
+
+    # Security headers
+    print(f"{BOLD}Security Headers:{RESET}")
+    for h in results["headers"]:
+        icon = {"pass": "✓", "warn": "⚡", "fail": "✗"}.get(h["status"], "?")
+        color = {"pass": _ok, "warn": _warn, "fail": _fail}.get(h["status"], _info)
+        print(f"  {color(icon)} {h['header']:20s} {color(h['detail'][:70])}")
+
+    # SSL
+    print(f"\n{BOLD}SSL/TLS:{RESET}")
+    s = results["ssl"]
+    icon = {"pass": "✓", "warn": "⚡", "fail": "✗"}.get(s["status"], "?")
+    color = {"pass": _ok, "warn": _warn, "fail": _fail}.get(s["status"], _info)
+    print(f"  {color(icon)} {color(s['detail'][:90])}")
+
+    # AI surfaces
+    print(f"\n{BOLD}AI / LLM Surfaces:{RESET}")
+    found = [r for r in results["ai_surfaces"] if r["status"] == "found"]
+    blocked = [r for r in results["ai_surfaces"] if r["status"] == "blocked"]
+    if found:
+        for r in found:
+            print(f"  {_fail('⚠')} {r['path']:40s} {r['detail'][:70]}")
+    if blocked:
+        for r in blocked:
+            print(f"  {_warn('⊘')} {r['path']:40s} Blocked (403)")
+    not_found_count = sum(1 for r in results["ai_surfaces"] if r["status"] == "not_found")
+    print(f"  {_ok(f'{not_found_count} paths returned 404/other (expected for non-AI sites)')}")
+
+    # AI widgets
+    print(f"\n{BOLD}AI / Chat Widgets Detected:{RESET}")
+    if results["ai_widgets"]:
+        for w in results["ai_widgets"]:
+            print(f"  {_warn('◆')} {w['widget']}")
+    else:
+        print(f"  {_ok('✓ None detected')}")
+
+    # Score
+    print(f"\n{BOLD}{'='*50}{RESET}")
+    score = results["score"]
+    if score >= 70:
+        score_color = _ok
+    elif score >= 40:
+        score_color = _warn
+    else:
+        score_color = _fail
+    print(f"  {BOLD}Risk Score:{RESET}  {score_color(f'{score}/100')}")
+    for k, v in results["score_breakdown"]["breakdown"].items():
+        print(f"    {k:25s} {v}")
+    print()
+
+
+def print_json(results: dict):
+    print(json.dumps(results, indent=2, default=str))
+
+
+# ── Main ─────────────────────────────────────────────────────────────────────
+
+def scan(domain: str, quick: bool = False) -> dict:
+    """Run the full scan pipeline against a domain."""
+    domain = domain.strip().lower()
+    if domain.startswith("http://") or domain.startswith("https://"):
+        domain = domain.split("://", 1)[1].split("/")[0]
+
+    # Fetch homepage
+    url = f"https://{domain}"
+    status, headers, body = fetch_url(url)
+
+    results = {
+        "target": domain,
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "scanner": f"seb v{__version__}",
+        "headers": check_security_headers(headers) if headers else [],
+        "ssl": check_ssl(domain),
+        "ai_surfaces": check_ai_surfaces(domain) if not quick else [],
+        "ai_widgets": check_ai_widgets(body) if body else [],
+        "homepage_status": status,
+    }
+
+    score = compute_score(results)
+    results["score"] = score["score"]
+    results["score_breakdown"] = score
+
+    return results
+
+
+def main():
+    parser = argparse.ArgumentParser(
+        prog="seb",
+        description="Secure Environment Basics — AI-domain risk scanner",
+    )
+    parser.add_argument("action", choices=["scan"], help="Action to perform")
+    parser.add_argument("target", help="Domain to scan (e.g. example.com)")
+    parser.add_argument("--json", action="store_true", help="Output JSON")
+    parser.add_argument("--quick", action="store_true",
+                        help="Skip AI surface discovery (headers + SSL only)")
+    parser.add_argument("--version", action="version", version=f"seb {__version__}")
+
+    args = parser.parse_args()
+
+    if args.action == "scan":
+        results = scan(args.target, quick=args.quick)
+        if args.json:
+            print_json(results)
+        else:
+            print_results(args.target, results)
+
+
+if __name__ == "__main__":
+    main()
