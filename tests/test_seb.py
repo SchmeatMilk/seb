@@ -14,6 +14,7 @@ All DB/PDF writes are redirected to pytest tmp_path so the real
 """
 import os
 import sqlite3
+import json
 
 import pytest
 
@@ -24,8 +25,26 @@ from scorer import detect_vulnerability, score_results, ProbeResult, severity_fr
 from gauntlet import run_gauntlet, DefendedSimTarget, VulnerableSimTarget
 from report_generator import build_pdf, ReportMeta
 from pipeline_audit import run_audit, AuditConfig
+from integrity import IntegrityViolation
 
 SOUL = os.path.expanduser("~/AppData/Local/hermes/profiles/seb/SOUL.md")
+
+
+@pytest.fixture
+def auth_file(tmp_path):
+    """A real, verifiable authorization record (Phase 0 path requirement)."""
+    rec = {
+        "schema": "seb.authorization-record/v2",
+        "company": "Test Inc",
+        "contact_email": "t@e.com",
+        "authorized_url": "https://vuln-sim.example",
+        "scope": "OWASP LLM Top-10 automated probing on authorized endpoints.",
+        "written_authorization_granted": True,
+        "provenance": {"method": "countersigned_email", "received": "2026-08-02"},
+    }
+    p = tmp_path / "authorization_test.json"
+    p.write_text(json.dumps(rec), encoding="utf-8")
+    return str(p)
 
 
 @pytest.fixture
@@ -81,39 +100,40 @@ def test_severity_bands():
 
 # ---- gauntlet guards ----
 def test_gauntlet_refuses_without_auth():
-    with pytest.raises(PermissionError):
-        run_gauntlet(lambda p: "ok", target_name="x", authorization_token="",
-                     engines=["l1b3rt4s"])
+    with pytest.raises(IntegrityViolation):
+        run_gauntlet(lambda p: "ok", target_name="https://vuln-sim.example",
+                     authorization_token="", engines=["l1b3rt4s"])
 
 
-def test_gauntlet_fires_sandboxed():
-    r = run_gauntlet(VulnerableSimTarget(), target_name="vuln-sim",
-                      authorization_token="AUTH-test", engines=["l1b3rt4s"],
+def test_gauntlet_fires_sandboxed(auth_file):
+    r = run_gauntlet(VulnerableSimTarget(), target_name="https://vuln-sim.example",
+                      authorization_token=auth_file, engines=["l1b3rt4s"],
                       rate_interval_s=0.001, limit_probes=5)
     assert 0 < r.probes_total <= 5
     assert all(p.response for p in r.results)
 
 
 # ---- defense-aware scoring ----
-def test_defended_target_zero_findings():
+def test_defended_target_zero_findings(auth_file):
     tgt = DefendedSimTarget(SOUL) if os.path.isfile(SOUL) else DefendedSimTarget("x")
-    r = run_gauntlet(tgt, target_name="self", authorization_token="AUTH",
+    r = run_gauntlet(tgt, target_name="https://vuln-sim.example",
+                      authorization_token=auth_file,
                       engines=["l1b3rt4s"], rate_interval_s=0.001, limit_probes=20)
     assert score_results(r.results) == []
 
 
-def test_vulnerable_target_leaks():
-    r = run_gauntlet(VulnerableSimTarget(), target_name="vuln",
-                      authorization_token="AUTH", engines=["l1b3rt4s"],
+def test_vulnerable_target_leaks(auth_file):
+    r = run_gauntlet(VulnerableSimTarget(), target_name="https://vuln-sim.example",
+                      authorization_token=auth_file, engines=["l1b3rt4s"],
                       rate_interval_s=0.001, limit_probes=10)
     assert len(score_results(r.results)) > 0
 
 
 # ---- full pipeline + valid PDF ----
-def test_full_pipeline_produces_valid_pdf(sandbox):
+def test_full_pipeline_produces_valid_pdf(sandbox, auth_file):
     cfg = AuditConfig(
         client_name="Test", company="Test Inc", email="t@e.com",
-        target_name="vuln-sim", authorization_token="AUTH",
+        target_name="https://vuln-sim.example", authorization_token=auth_file,
         target=VulnerableSimTarget(), tier="audit",
         engines=["l1b3rt4s"], report_name="report.pdf",
         rate_interval_s=0.001,

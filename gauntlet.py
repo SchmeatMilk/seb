@@ -293,10 +293,13 @@ def run_gauntlet(
     engines           : subset of ['l1b3rt4s','garak','pyrit','giskard']
     limit_probes      : cap probes (useful for retainer quick-scans)
     """
-    if not authorization_token or not str(authorization_token).strip():
-        raise PermissionError(
-            "REFUSED: no written authorization token. SEB never tests without it (SOUL.md §5/§8)."
-        )
+    # Phase 0 (SEB_V2_MASTER_PLAN.md 0.5): replace the non-empty-string check
+    # (under which the literal 'SELF-AUTH-dogfood' passes) with a real, verified
+    # authorization record. Fails loud and closed on any gap.
+    from integrity import load_verified_authorization, assert_target_in_scope
+
+    auth_record = load_verified_authorization(authorization_token)
+    assert_target_in_scope(target_name, auth_record)
 
     engines = engines or ["l1b3rt4s", "garak", "pyrit", "giskard"]
     run = GauntletRun(target_name=target_name)

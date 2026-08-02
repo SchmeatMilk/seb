@@ -9,3 +9,9 @@
 2026-08-01T22:13:35.946095Z  [linkedin_draft]  Draft post: ...
 2026-08-02T03:29:36.868311Z  [critical_on_retainer]  URGENT: leak detected
 2026-08-02T03:29:36.893464Z  [linkedin_draft]  Draft post: ...
+2026-08-02T04:20:22.653856Z  [critical_on_retainer]  URGENT: leak detected
+2026-08-02T04:21:55.651692Z  [critical_on_retainer]  URGENT: leak detected
+2026-08-02T04:23:11.099532Z  [critical_on_retainer]  CRITICAL finding on retainer client Acme: prompt-injection in their support chatbot exfiltrated the system prompt. Impact: full disclosure.
+2026-08-02T04:23:11.126754Z  [linkedin_draft]  Draft post: SEB's new MCP-security tier covers tool-poisoning and prompt-injection across agent surfaces — thoughts before I publish?
+2026-08-02T04:24:55.813188Z  [critical_on_retainer]  CRITICAL finding on retainer client Acme: prompt-injection in their support chatbot exfiltrated the system prompt. Impact: full disclosure.
+2026-08-02T04:24:55.838318Z  [linkedin_draft]  Draft post: SEB's new MCP-security tier covers tool-poisoning and prompt-injection across agent surfaces — thoughts before I publish?

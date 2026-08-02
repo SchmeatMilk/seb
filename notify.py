@@ -22,6 +22,8 @@ from __future__ import annotations
 
 import json
 import os
+import re
+import sys
 import time
 from datetime import datetime
 from typing import Optional
@@ -112,6 +114,26 @@ def _send_telegram(message: str) -> str:
     raise RuntimeError("Telegram send failed (markup + plain fallback both rejected)")
 
 
+def _reject_placeholder_escalation(event: str, message: str) -> None:
+    """Fail closed on placeholder/test escalation bodies (B6).
+
+    Historically the `__main__` demo string and a bare 'URGENT: leak detected'
+    fired into the live Telegram channel. Reject any escalation whose body is a
+    known placeholder, under ~20 chars, or ends in a bare '...'.
+    """
+    if message is None:
+        raise ValueError("escalate: empty message refused")
+    m = message.strip()
+    if "[Client]" in m:
+        raise ValueError(f"escalate: placeholder body refused (contains '[Client]'): {m[:60]!r}")
+    if len(m) < 20:
+        raise ValueError(f"escalate: body too short to be a real escalation ({len(m)} chars)")
+    if m.endswith("...") and not m.rstrip(".").endswith("…"):
+        # allow legitimate ellipsis in a longer real message; reject bare '...' tail
+        if len(m) < 40:
+            raise ValueError(f"escalate: truncated placeholder body refused: {m[:60]!r}")
+
+
 def escalate(
     event: str,
     message: str,
@@ -124,6 +146,9 @@ def escalate(
 
     Returns {status: 'sent'|'queued'|'needs_approval', event, message}.
     """
+    # Phase 0 (SEB_V2_MASTER_PLAN.md 0.6): refuse placeholder/test bodies that
+    # have historically fired into the live Telegram channel. Fail closed.
+    _reject_placeholder_escalation(event, message)
     needs_approval = require_approval if require_approval is not None else (event in APPROVAL_EVENTS)
     if needs_approval:
         # Do not send; queue for Malik's /post approval.
@@ -174,6 +199,11 @@ def drain_queue() -> list[dict]:
 
 
 if __name__ == "__main__":
+    # Phase 0 (SEB_V2_MASTER_PLAN.md 0.6): the demo block must NOT fire into the
+    # live channel. Require an explicit env flag; otherwise print a no-op note.
+    if os.environ.get("SEB_NOTIFY_DEMO") != "1":
+        print("notify.py: refusing to run demo escalation. Set SEB_NOTIFY_DEMO=1 to test.")
+        sys.exit(0)
     r = escalate("critical_on_retainer",
                  "URGENT: [Client] new CRITICAL: prompt-injection -> system prompt leak. Impact: full system disclosure.")
     print("ESCALATION:", r)

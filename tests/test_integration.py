@@ -53,7 +53,11 @@ def test_notify_queued_when_no_token(tmp_path, monkeypatch):
     monkeypatch.setattr(notify, "CHAT_ID", None)
     q = tmp_path / ".escalation_queue.jsonl"
     monkeypatch.setattr(notify, "QUEUE_PATH", str(q))
-    r = notify.escalate("critical_on_retainer", "URGENT: leak detected")
+    r = notify.escalate(
+        "critical_on_retainer",
+        "CRITICAL finding on retainer client Acme: prompt-injection in their "
+        "support chatbot exfiltrated the system prompt. Impact: full disclosure.",
+    )
     assert r["status"] == "queued"
     assert q.is_file()
     lines = q.read_text(encoding="utf-8").strip().splitlines()
@@ -64,9 +68,26 @@ def test_notify_queued_when_no_token(tmp_path, monkeypatch):
 
 
 def test_notify_linkedin_needs_approval(tmp_path, monkeypatch):
+    # Phase 0 (SEB_V2_MASTER_PLAN.md 0.6): placeholder bodies like
+    # "Draft post: ..." are refused closed — they must not reach any channel.
+    import pytest
     monkeypatch.setattr(notify, "BOT_TOKEN", None)
     monkeypatch.setattr(notify, "CHAT_ID", None)
     q = tmp_path / ".escalation_queue.jsonl"
     monkeypatch.setattr(notify, "QUEUE_PATH", str(q))
-    r = notify.escalate("linkedin_draft", "Draft post: ...")
+    with pytest.raises(ValueError):
+        notify.escalate("linkedin_draft", "Draft post: ...")
+
+
+def test_notify_real_draft_needs_approval(tmp_path, monkeypatch):
+    """A real, substantive draft body still routes to needs_approval."""
+    monkeypatch.setattr(notify, "BOT_TOKEN", None)
+    monkeypatch.setattr(notify, "CHAT_ID", None)
+    q = tmp_path / ".escalation_queue.jsonl"
+    monkeypatch.setattr(notify, "QUEUE_PATH", str(q))
+    r = notify.escalate(
+        "linkedin_draft",
+        "Draft post: SEB's new MCP-security tier covers tool-poisoning and "
+        "prompt-injection across agent surfaces — thoughts before I publish?",
+    )
     assert r["status"] == "needs_approval"

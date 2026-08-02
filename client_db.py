@@ -240,6 +240,27 @@ def set_engagement_status(
     own = conn is None
     conn = conn or get_conn()
     try:
+        # Phase 0 (SEB_V2_MASTER_PLAN.md 0.5): an engagement may not be marked
+        # delivered/completed without persisted findings and a real report file.
+        if completed and status in ("delivered", "completed"):
+            from integrity import IntegrityViolation
+
+            # findings are persisted before this call — check them live.
+            n = conn.execute(
+                "SELECT COUNT(*) FROM findings WHERE engagement_id=?",
+                (engagement_id,),
+            ).fetchone()[0]
+            if n == 0:
+                raise IntegrityViolation(
+                    f"{engagement_id}: 0 findings persisted. An engagement with no "
+                    f"findings has not been performed. (A clean result is still a "
+                    f"finding row — record it as 'no vulnerabilities detected'.)"
+                )
+            # the report file we are about to record must actually exist on disk.
+            if not report_path or not os.path.exists(report_path):
+                raise IntegrityViolation(
+                    f"{engagement_id}: report_path missing or file absent ({report_path!r})"
+                )
         if completed:
             conn.execute(
                 "UPDATE engagements SET status=?, report_path=?, completed_at=? WHERE id=?",
