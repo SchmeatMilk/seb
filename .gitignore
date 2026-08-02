@@ -12,6 +12,10 @@ __pycache__/
 output/*.pdf
 tests/_test_*.db
 
+# Generated working files (regenerable; never commit)
+_assessment.json
+_leads_manifest.json
+
 # Large/vendor dirs — never commit third-party packages
 .venv/
 .engines-venv/
