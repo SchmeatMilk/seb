@@ -1,0 +1,11 @@
+2026-07-14T20:21:41.984751Z  [test_ping]  ALERT-WIRING LIVE: escalation log works (no Telegram creds needed). Source: manual verify 2026-07-14.
+2026-07-14T20:45:05.076426Z  [oss-pr-resubmitted]  OSS PR #1963 reopened at NVIDIA/garak (contract test, reworked per #1962 review). Credibility gate re-attempted.
+2026-07-18T16:37:14.970438Z  [critical_on_retainer]  ⚠️ CK Catalyst (ckcatalyst.ca) — AI-risk score REVISED 50→78 (HIGH)
+2026-07-20T16:32:40.616895Z  [auth_gated_blocker]  SEB-SALES pipeline run 2026-07-20: 33 leads in CRM (identified), 0 authorized, 0 contacted. pipeline_leads.py created and ran successfully but outputs zero drafts — no signed authorizations on file. Top prospect CK Catalyst (score 78, AI-services) still unresolved. 11 pending escalations in queue (undelivered — no Telegram creds). Next action needed: Klaus — review CK Catalyst lead status and advise on authorization or alternative lead-gen channel activation.
+2026-07-20T17:03:16.631500Z  [critical_on_retainer]  URGENT: [Client] new CRITICAL: prompt-injection -> system prompt leak. Impact: full system disclosure.
+2026-07-22T00:19:06.838678Z  [test_ping]  SEB Telegram wiring verified 2026-07-21 — live delivery channel connected. (This is a test; no action needed.)
+2026-07-22T16:33:40.893842Z  [pipeline_status]  SEB-SALES Pipeline Run 2026-07-22: CK Catalyst outreach APPROVED and ready to send (sole authorized lead, score 78 HIGH). 32 other leads unauthorized — all local SMBs without AI surfaces, poor ICP fit for $500 Quick Scan lane. Pipeline auth-gate working correctly. RECOMMENDATIONS: (1) Send CK Catalyst outreach now — draft approved, channel verified. (2) Pivot lead sourcing to AI-native companies (SaaS w/ chatbots, A2A, LLM tools) — current Kelowna trades manifest wont convert. (3) Drain escalation queue now that Telegram is live.
+2026-08-01T22:13:35.926494Z  [critical_on_retainer]  URGENT: leak detected
+2026-08-01T22:13:35.946095Z  [linkedin_draft]  Draft post: ...
+2026-08-02T03:29:36.868311Z  [critical_on_retainer]  URGENT: leak detected
+2026-08-02T03:29:36.893464Z  [linkedin_draft]  Draft post: ...

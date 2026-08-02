@@ -41,16 +41,30 @@ from scorer import ProbeResult
 L1B3RT4S_DIR = os.path.expanduser("~/.l1b3rt4s_clone")
 TARGET_MIN_INTERVAL_S = 1.0  # rate-limit; non-destructive, single-session
 
-# Map L1B3RT4S category -> SEB internal attack class
+# Map L1B3RT4S !SHORTCUTS.json "category" -> SEB internal attack class.
+# Keys MUST match the literal category strings in !SHORTCUTS.json
+# (verified 2026-07-13 against the corpus). The previous map used 5 keys
+# ("Semantic", "Roleplay", "Refusal Inversion", "Exfiltration",
+# "Instruction Override") that do NOT exist in the corpus, so every
+# Obfuscation/Creative/Experimental/Psychological/Cosmic/Temporal shortcut
+# silently fell through to the "jailbreak" default — collapsing taxonomy
+# resolution. Corrected below. All values must be keys in scorer.TAXONOMY.
 _CATEGORY_MAP = {
     "Core Liberation": "godmode",
     "Dynamic Intelligence": "jailbreak",
     "Formatting / Transparency": "system_prompt_leak",
-    "Semantic": "semantic",
-    "Roleplay": "roleplay",
-    "Refusal Inversion": "refusal_inversion",
-    "Exfiltration": "exfiltration",
-    "Instruction Override": "instruction_override",
+    "Formatting / Temporal": "instruction_override",
+    "Psychological / Philosophical": "roleplay",
+    "Cosmic / Esoteric": "roleplay",
+    "Obfuscation / Stealth": "instruction_override",
+    "Creative / Visual": "instruction_override",
+    "Creative / Chaos": "instruction_override",
+    "Creative / Autonomy": "instruction_override",
+    "Creative / Network Thinking": "instruction_override",
+    "Creative / Aesthetic": "instruction_override",
+    "Experimental / Stealth": "instruction_override",
+    "Experimental / Introspection": "system_prompt_leak",
+    "Experimental / Probabilistic": "jailbreak",
 }
 
 # Default class for any un-mapped .mkd file (by filename heuristic).

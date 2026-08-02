@@ -1,0 +1,259 @@
+{
+  "generated_at": "2026-08-01T13:01:21.990143+00:00",
+  "l1b3rt4s": {
+    "file_count": 39,
+    "total_bytes": 25601905,
+    "attack_classes": [
+      "godmode",
+      "instruction_override",
+      "system_prompt_leak",
+      "token_smuggling"
+    ],
+    "attack_class_count": 4,
+    "shortcut_categories": [
+      "Core Liberation",
+      "Cosmic / Esoteric",
+      "Creative / Aesthetic",
+      "Creative / Autonomy",
+      "Creative / Chaos",
+      "Creative / Network Thinking",
+      "Creative / Visual",
+      "Dynamic Intelligence",
+      "Experimental / Introspection",
+      "Experimental / Probabilistic",
+      "Experimental / Stealth",
+      "Formatting / Temporal",
+      "Formatting / Transparency",
+      "Obfuscation / Stealth",
+      "Psychological / Philosophical"
+    ],
+    "files": {
+      "-MISCELLANEOUS-.mkd": {
+        "bytes": 20727,
+        "sha": "ba68624f9f33efd5",
+        "class": "instruction_override"
+      },
+      "1337.mkd": {
+        "bytes": 36,
+        "sha": "bfcf4f6ae366a665",
+        "class": "godmode"
+      },
+      "AAA.mkd": {
+        "bytes": 152,
+        "sha": "a52b0acbaa1a9dbb",
+        "class": "instruction_override"
+      },
+      "ALIBABA.mkd": {
+        "bytes": 6251,
+        "sha": "1ed8c285214b3427",
+        "class": "instruction_override"
+      },
+      "AMAZON.mkd": {
+        "bytes": 991,
+        "sha": "50428f915d94ae89",
+        "class": "instruction_override"
+      },
+      "ANTHROPIC.mkd": {
+        "bytes": 35858,
+        "sha": "39778b2ee7866e44",
+        "class": "instruction_override"
+      },
+      "APPLE.mkd": {
+        "bytes": 896,
+        "sha": "94707b834cd07e8f",
+        "class": "instruction_override"
+      },
+      "BRAVE.mkd": {
+        "bytes": 1649,
+        "sha": "66bfee8eacc2f360",
+        "class": "instruction_override"
+      },
+      "CHATGPT.mkd": {
+        "bytes": 903,
+        "sha": "cb2e95e8237ece70",
+        "class": "instruction_override"
+      },
+      "COHERE.mkd": {
+        "bytes": 269,
+        "sha": "c8ae40f1c73fd7bc",
+        "class": "instruction_override"
+      },
+      "CURSOR.mkd": {
+        "bytes": 756,
+        "sha": "339817ba44c3b5d3",
+        "class": "instruction_override"
+      },
+      "DEEPSEEK.mkd": {
+        "bytes": 5490,
+        "sha": "647e2ef0a5553ab1",
+        "class": "instruction_override"
+      },
+      "FETCHAI.mkd": {
+        "bytes": 872,
+        "sha": "67ce22c17f9895a5",
+        "class": "instruction_override"
+      },
+      "GOOGLE.mkd": {
+        "bytes": 20569,
+        "sha": "507a9bc03a132486",
+        "class": "instruction_override"
+      },
+      "GRAYSWAN.mkd": {
+        "bytes": 528,
+        "sha": "5e278418513828bb",
+        "class": "instruction_override"
+      },
+      "GROK-MEGA.mkd": {
+        "bytes": 97158,
+        "sha": "3551b44db2f03d90",
+        "class": "instruction_override"
+      },
+      "HUME.mkd": {
+        "bytes": 537,
+        "sha": "32610318a22b81cf",
+        "class": "instruction_override"
+      },
+      "INCEPTION.mkd": {
+        "bytes": 813,
+        "sha": "e9fca9bed86174fb",
+        "class": "instruction_override"
+      },
+      "INFLECTION.mkd": {
+        "bytes": 203,
+        "sha": "5e01f2ff5e055723",
+        "class": "instruction_override"
+      },
+      "LIQUIDAI.mkd": {
+        "bytes": 304,
+        "sha": "7f1723ddf6010e5b",
+        "class": "instruction_override"
+      },
+      "META.mkd": {
+        "bytes": 3870,
+        "sha": "07b2362c7c7f4bb0",
+        "class": "instruction_override"
+      },
+      "MICROSOFT.mkd": {
+        "bytes": 178,
+        "sha": "4e12eb94e5b40a90",
+        "class": "instruction_override"
+      },
+      "MIDJOURNEY.mkd": {
+        "bytes": 1113,
+        "sha": "69573a2938adebd8",
+        "class": "instruction_override"
+      },
+      "MISTRAL.mkd": {
+        "bytes": 1662,
+        "sha": "de99d7475b9561d4",
+        "class": "instruction_override"
+      },
+      "MOONSHOT.mkd": {
+        "bytes": 1497,
+        "sha": "86954bfabb5f376d",
+        "class": "instruction_override"
+      },
+      "MULTION.mkd": {
+        "bytes": 12108,
+        "sha": "4df6bcb50adad54b",
+        "class": "instruction_override"
+      },
+      "NOUS.mkd": {
+        "bytes": 1834,
+        "sha": "198add175d248bac",
+        "class": "instruction_override"
+      },
+      "NVIDIA.mkd": {
+        "bytes": 1847,
+        "sha": "907a4c6edcb474d7",
+        "class": "instruction_override"
+      },
+      "OPENAI.mkd": {
+        "bytes": 13522,
+        "sha": "a2a76dd589ac1408",
+        "class": "instruction_override"
+      },
+      "PERPLEXITY.mkd": {
+        "bytes": 1044,
+        "sha": "e693de01ca08b22a",
+        "class": "instruction_override"
+      },
+      "REFLECTION.mkd": {
+        "bytes": 953,
+        "sha": "ba3ed3c344d005ce",
+        "class": "instruction_override"
+      },
+      "REKA.mkd": {
+        "bytes": 571,
+        "sha": "b2e9082d0dd4a736",
+        "class": "instruction_override"
+      },
+      "SYSTEMPROMPTS.mkd": {
+        "bytes": 37498,
+        "sha": "fc40e89aa85c8b4f",
+        "class": "system_prompt_leak"
+      },
+      "TOKEN80M8.mkd": {
+        "bytes": 23448666,
+        "sha": "aa032e7030732cf3",
+        "class": "token_smuggling"
+      },
+      "TOKENADE.mkd": {
+        "bytes": 1867310,
+        "sha": "32a89081dbc15829",
+        "class": "token_smuggling"
+      },
+      "WINDSURF.mkd": {
+        "bytes": 1054,
+        "sha": "1906c914283b28bb",
+        "class": "instruction_override"
+      },
+      "XAI.mkd": {
+        "bytes": 7500,
+        "sha": "44589af4429ed53e",
+        "class": "instruction_override"
+      },
+      "ZAI.mkd": {
+        "bytes": 4228,
+        "sha": "8db76fe5f1e8d3ae",
+        "class": "instruction_override"
+      },
+      "ZYPHRA.mkd": {
+        "bytes": 488,
+        "sha": "e915764a6125eede",
+        "class": "instruction_override"
+      }
+    }
+  },
+  "cl4r1tas": {
+    "platform_count": 25,
+    "platforms": [
+      "ANTHROPIC",
+      "BOLT",
+      "BRAVE",
+      "CLINE",
+      "CLUELY",
+      "CURSOR",
+      "DEVIN",
+      "DIA",
+      "FACTORY",
+      "GOOGLE",
+      "HUME",
+      "LOVABLE",
+      "MANUS",
+      "META",
+      "MINIMAX",
+      "MISTRAL",
+      "MOONSHOT",
+      "MULTION",
+      "OPENAI",
+      "PERPLEXITY",
+      "REPLIT",
+      "SAMEDEV",
+      "VERCEL V0",
+      "WINDSURF",
+      "XAI"
+    ]
+  },
+  "git_commit": "64960b783249d36f76a48a33103cc4b168332b9b"
+}

@@ -1,0 +1,36 @@
+{{#*inline "body"}}
+<p class="text-base mb-3" style="color: var(--color-text); font-family: var(--font-sans);">
+  Hi {{ first_name }},
+</p>
+
+<p class="text-base mb-3" style="color: var(--color-text); font-family: var(--font-sans);">
+  I came across {{ company }}'s public AI agent and wanted to reach out directly — not with a pitch, but with a question.
+</p>
+
+<p class="text-base mb-3" style="color: var(--color-text); font-family: var(--font-sans);">
+  Your team's probably dealing with the same thing everyone is right now: a chatbot that fields questions 24/7, but nobody really knows what it might leak, hallucinate, or accidentally let someone do.
+</p>
+
+<p class="text-base mb-3" style="color: var(--color-text); font-family: var(--font-sans);">
+  We ran a <strong>passive surface check</strong> on <code>{{ target_domain }}</code> — read-only, zero interaction, just what any visitor can already see. Found a few things worth a conversation:
+</p>
+
+<ul class="list list--check text-base mb-3" style="color: var(--color-text); font-family: var(--font-sans);">
+  <li>OpenAPI spec exposed — maps every endpoint an attacker could probe</li>
+  <li>MCP server config public — shows what tools your agent can reach</li>
+  <li><code>llms-full.txt</code> accessible — titled "Full Agent Context"</li>
+  <li>No Content-Security-Policy header — XSS containment gap</li>
+</ul>
+
+<p class="text-base mb-3" style="color: var(--color-text); font-family: var(--font-sans);">
+  The good news: TLS is solid, HSTS is on, and there's no public chat widget to attack directly.
+</p>
+
+<p class="text-base mb-3" style="color: var(--color-text); font-family: var(--font-sans);">
+  Would a 5-day risk audit — scored, prioritized, plain English — help your team sleep easier? No scan runs without your written sign-off. Ever.
+</p>
+
+<p class="text-base mb-4" style="color: var(--color-text); font-family: var(--font-sans);">
+  — SEB (Security Inquisitor Balance)
+</p>
+{{/inline}}

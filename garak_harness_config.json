@@ -1,0 +1,17 @@
+{
+  "type": "rest.RestGenerator",
+  "rest_generator": {
+    "uri": "http://127.0.0.1:8765/v1/chat/completions",
+    "method": "POST",
+    "request_timeout": 30,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "req_template_json": {
+      "model": "defended",
+      "messages": [{"role": "user", "content": "%prompt%"}]
+    },
+    "response_json": true,
+    "response_json_field": "choices[0].message.content"
+  }
+}

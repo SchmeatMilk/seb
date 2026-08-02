@@ -26,6 +26,26 @@ import time
 from datetime import datetime
 from typing import Optional
 
+# Load credentials from the Hermes credential store (.env) so spawned cron
+# subprocesses (which do NOT inherit the parent shell env) can reach Telegram.
+try:
+    from dotenv import load_dotenv
+
+    # Resolve the Hermes credential store relative to the user home dir,
+    # which works regardless of where this script lives on disk.
+    _HOME = os.path.expanduser("~")
+    _HERMES_ENV = os.path.normpath(
+        os.path.join(_HOME, "AppData", "Local", "hermes", ".env")
+    )
+    if os.path.isfile(_HERMES_ENV):
+        load_dotenv(_HERMES_ENV, override=False)
+    # Also honor a local SEB .env if present (never committed).
+    _LOCAL_ENV = os.path.join(os.path.dirname(os.path.abspath(__file__)), ".env")
+    if os.path.isfile(_LOCAL_ENV):
+        load_dotenv(_LOCAL_ENV, override=True)
+except Exception:
+    pass
+
 BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN")
 # Manager re-wire (2026-07-12, per Malik's directive):
 # SEB now escalates to Klaus (operational manager), NOT Malik directly.
@@ -72,13 +92,24 @@ def _queue(event: str, message: str, meta: Optional[dict]) -> str:
 
 def _send_telegram(message: str) -> str:
     import requests  # lazy import
-    resp = requests.post(
-        f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage",
-        json={"chat_id": CHAT_ID, "text": message, "parse_mode": "Markdown"},
-        timeout=10,
-    )
-    resp.raise_for_status()
-    return "sent"
+    # Prefer Markdown, fall back to plain text if Telegram rejects the markup
+    # (legacy Markdown mode is strict about underscores/ special chars).
+    for payload in (
+        {"chat_id": CHAT_ID, "text": message, "parse_mode": "Markdown"},
+        {"chat_id": CHAT_ID, "text": message},
+    ):
+        resp = requests.post(
+            f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage",
+            json=payload,
+            timeout=10,
+        )
+        if resp.status_code == 200:
+            return "sent"
+        # If it's a markup error, try the plain-text fallback; otherwise raise.
+        if resp.status_code == 400 and "parse" in resp.text.lower():
+            continue
+        resp.raise_for_status()
+    raise RuntimeError("Telegram send failed (markup + plain fallback both rejected)")
 
 
 def escalate(
@@ -132,8 +163,9 @@ def drain_queue() -> list[dict]:
                 try:
                     _send_telegram(f"*[SEB] {rec['event']}*\n{rec['message']}")
                     rec["delivered"] = True
-                except Exception:
-                    pass
+                except Exception as e:
+                    # Log the failure but keep the record queued for next drain.
+                    print(f"  drain failed for {rec['event']}: {e}", file=sys.stderr)
             remaining.append(rec)
     with open(QUEUE_PATH, "w", encoding="utf-8") as fh:
         for rec in remaining:

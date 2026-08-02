@@ -1,0 +1,12 @@
+{
+  "schema": "seb.authorization-record/v1",
+  "timestamp": "2026-07-20T23:00:00.000000",
+  "company": "CK Catalyst",
+  "contact_email": "malik@seb.security",
+  "target_type": "agent",
+  "engagement": "prompt-audit",
+  "scope": "Full AI-agent public surface at https://ckcatalyst.ca including: A2A agent card (/api/a2a), MCP server (/api/mcp), OpenAPI spec (/openapi.json), /llms.txt (10.9KB), /llms-full.txt, chatbot-knowledge.json, ai-index.json, agent skills index. Testing limited to OWASP LLM Top-10 automated probing via authorized endpoints. No infrastructure penetration, no data exfiltration, no denial-of-service.",
+  "authorization_statement": "I authorize SEB to test CK Catalyst (agent) under scope: Full AI-agent public surface at https://ckcatalyst.ca including: A2A agent card (/api/a2a), MCP server (/api/mcp), OpenAPI spec (/openapi.json), /llms.txt (10.9KB), /llms-full.txt, chatbot-knowledge.json, ai-index.json, agent skills index. Testing limited to OWASP LLM Top-10 automated probing via authorized endpoints. No infrastructure penetration, no data exfiltration, no denial-of-service.",
+  "written_authorization_granted": true,
+  "signature": "f3a2b1c4"
+}

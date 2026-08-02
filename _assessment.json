@@ -1,0 +1,1248 @@
+{
+  "generated": "2026-07-13",
+  "count": 33,
+  "results": [
+    {
+      "name": "Acme Plumbing",
+      "host": "acmeplumbing.ca",
+      "url": "https://acmeplumbing.ca",
+      "industry": "Plumbing",
+      "city": "Kelowna",
+      "_cached": true,
+      "status": "OK",
+      "score": 47,
+      "reasons": [
+        "3 third-party scripts",
+        "Public form collects PII (email/phone)",
+        "No HSTS header",
+        "No Content-Security-Policy",
+        "No X-Frame-Options",
+        "WordPress login/xmlrpc exposed",
+        "API/GraphQL signature in public page"
+      ],
+      "analysis": {
+        "has_widget": false,
+        "ai_native": false,
+        "vendors": [],
+        "gen_ai_text": [],
+        "third_party_scripts": [
+          "20",
+          "acmeplumbing.ca",
+          "www.portotheme.com"
+        ],
+        "third_party_count": 3,
+        "has_form": true,
+        "pii_inputs": [
+          "text"
+        ],
+        "mailto_count": 0,
+        "https": true,
+        "hsts": false,
+        "csp": false,
+        "xfo": false,
+        "cms": "wordpress",
+        "wp_login_exposed": true,
+        "xmlrpc_exposed": true,
+        "api_signature": true,
+        "critical_signals": []
+      }
+    },
+    {
+      "name": "Green landscaping",
+      "host": "greenlandscaping.com",
+      "url": "https://greenlandscaping.com",
+      "industry": "Landscaping",
+      "city": "Kelowna",
+      "_cached": true,
+      "status": "OK",
+      "score": 35,
+      "reasons": [
+        "Public form collects PII (email/phone)",
+        "No HSTS header",
+        "No Content-Security-Policy",
+        "No X-Frame-Options",
+        "API/GraphQL signature in public page"
+      ],
+      "analysis": {
+        "has_widget": false,
+        "ai_native": false,
+        "vendors": [],
+        "gen_ai_text": [
+          "llm"
+        ],
+        "third_party_scripts": [
+          "cdn.jsdelivr.net"
+        ],
+        "third_party_count": 1,
+        "has_form": true,
+        "pii_inputs": [
+          "text"
+        ],
+        "mailto_count": 0,
+        "https": true,
+        "hsts": false,
+        "csp": false,
+        "xfo": false,
+        "cms": null,
+        "wp_login_exposed": false,
+        "xmlrpc_exposed": false,
+        "api_signature": true,
+        "critical_signals": []
+      }
+    },
+    {
+      "name": "HeatCo HVAC",
+      "host": "heatcohvac.com",
+      "url": "https://heatcohvac.com",
+      "industry": "HVAC",
+      "city": "Kelowna",
+      "error": "HTTPSConnectionPool(host='heatcohvac.com', port=443): Max retries exceeded with url: / (Caused by NameResolutionError(\"HTTPSConnection(host='heatcohvac.com', port=443): Failed to resolve 'heatcohvac.com' ([Errno 11001] getaddrinfo failed)\"))",
+      "status": "UNREACHABLE",
+      "score": 0,
+      "reasons": [
+        "Site unreachable (HTTPSConnectionPool(host='heatcohvac.com', port=443): Max retries exceeded with url: / (Caused by NameResolutionError(\"HTTPSConnection(host='heatcohvac.com', port=443): Failed to resolve 'heatcohvac.com' ([Errno 11001] getaddrinfo failed)\"))) \u2014 not assessable"
+      ],
+      "analysis": {}
+    },
+    {
+      "name": "NexaTech",
+      "host": "nexa.tech",
+      "url": "https://nexa.tech",
+      "industry": "Software",
+      "city": "Kelowna",
+      "error": "HTTPSConnectionPool(host='nexa.tech', port=443): Max retries exceeded with url: / (Caused by NameResolutionError(\"HTTPSConnection(host='nexa.tech', port=443): Failed to resolve 'nexa.tech' ([Errno 11001] getaddrinfo failed)\"))",
+      "status": "UNREACHABLE",
+      "score": 0,
+      "reasons": [
+        "Site unreachable (HTTPSConnectionPool(host='nexa.tech', port=443): Max retries exceeded with url: / (Caused by NameResolutionError(\"HTTPSConnection(host='nexa.tech', port=443): Failed to resolve 'nexa.tech' ([Errno 11001] getaddrinfo failed)\"))) \u2014 not assessable"
+      ],
+      "analysis": {}
+    },
+    {
+      "name": "Polaris Marketing",
+      "host": "polaris.ca",
+      "url": "https://polaris.ca",
+      "industry": "Marketing",
+      "city": "Kelowna",
+      "_cached": true,
+      "status": "OK",
+      "score": 20,
+      "reasons": [
+        "No HSTS header",
+        "No Content-Security-Policy",
+        "No X-Frame-Options"
+      ],
+      "analysis": {
+        "has_widget": false,
+        "ai_native": false,
+        "vendors": [],
+        "gen_ai_text": [],
+        "third_party_scripts": [],
+        "third_party_count": 0,
+        "has_form": false,
+        "pii_inputs": [],
+        "mailto_count": 0,
+        "https": true,
+        "hsts": false,
+        "csp": false,
+        "xfo": false,
+        "cms": null,
+        "wp_login_exposed": false,
+        "xmlrpc_exposed": false,
+        "api_signature": false,
+        "critical_signals": []
+      }
+    },
+    {
+      "name": "Apex Staffing",
+      "host": "apexstaffing.com",
+      "url": "https://apexstaffing.com",
+      "industry": "Staffing",
+      "city": "Kelowna",
+      "error": "HTTPSConnectionPool(host='apexstaffing.com', port=443): Max retries exceeded with url: / (Caused by SSLError(SSLEOFError(8, '[SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1006)')))",
+      "status": "UNREACHABLE",
+      "score": 0,
+      "reasons": [
+        "Site unreachable (HTTPSConnectionPool(host='apexstaffing.com', port=443): Max retries exceeded with url: / (Caused by SSLError(SSLEOFError(8, '[SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1006)')))) \u2014 not assessable"
+      ],
+      "analysis": {}
+    },
+    {
+      "name": "City Towing",
+      "host": "citytowingkelowna.ca",
+      "url": "https://citytowingkelowna.ca",
+      "industry": "Towing Services",
+      "city": "Kelowna",
+      "status": "OK",
+      "score": 27,
+      "reasons": [
+        "No HSTS header",
+        "No Content-Security-Policy",
+        "No X-Frame-Options",
+        "WordPress login/xmlrpc exposed"
+      ],
+      "analysis": {
+        "has_widget": false,
+        "ai_native": false,
+        "vendors": [],
+        "gen_ai_text": [],
+        "third_party_scripts": [
+          "citytowingkelowna.ca"
+        ],
+        "third_party_count": 1,
+        "has_form": false,
+        "pii_inputs": [
+          "search"
+        ],
+        "mailto_count": 0,
+        "https": true,
+        "hsts": false,
+        "csp": false,
+        "xfo": false,
+        "cms": "wordpress",
+        "wp_login_exposed": true,
+        "xmlrpc_exposed": false,
+        "api_signature": false,
+        "critical_signals": []
+      }
+    },
+    {
+      "name": "InstantTalk",
+      "host": "instanttalk.online",
+      "url": "https://www.instanttalk.online",
+      "industry": "Business",
+      "city": "Kelowna",
+      "error": "HTTPSConnectionPool(host='www.clearsignalwireless.ca', port=443): Max retries exceeded with url: / (Caused by SSLError(SSLError(1, '[SSL: TLSV1_ALERT_INTERNAL_ERROR] tlsv1 alert internal error (_ssl.c:1006)')))",
+      "status": "UNREACHABLE",
+      "score": 0,
+      "reasons": [
+        "Site unreachable (HTTPSConnectionPool(host='www.clearsignalwireless.ca', port=443): Max retries exceeded with url: / (Caused by SSLError(SSLError(1, '[SSL: TLSV1_ALERT_INTERNAL_ERROR] tlsv1 alert internal error (_ssl.c:1006)')))) \u2014 not assessable"
+      ],
+      "analysis": {}
+    },
+    {
+      "name": "ClearSignal Wireless",
+      "host": "clearsignalwireless.ca",
+      "url": "https://www.clearsignalwireless.ca",
+      "industry": "Business",
+      "city": "Kelowna",
+      "error": "HTTPSConnectionPool(host='www.clearsignalwireless.ca', port=443): Max retries exceeded with url: / (Caused by SSLError(SSLError(1, '[SSL: TLSV1_ALERT_INTERNAL_ERROR] tlsv1 alert internal error (_ssl.c:1006)')))",
+      "status": "UNREACHABLE",
+      "score": 0,
+      "reasons": [
+        "Site unreachable (HTTPSConnectionPool(host='www.clearsignalwireless.ca', port=443): Max retries exceeded with url: / (Caused by SSLError(SSLError(1, '[SSL: TLSV1_ALERT_INTERNAL_ERROR] tlsv1 alert internal error (_ssl.c:1006)')))) \u2014 not assessable"
+      ],
+      "analysis": {}
+    },
+    {
+      "name": "Veridian Painting",
+      "host": "veridianpainting.com",
+      "url": "https://veridianpainting.com",
+      "industry": "Painting Contractors",
+      "city": "West Kelowna",
+      "_cached": true,
+      "status": "OK",
+      "score": 30,
+      "reasons": [
+        "3 third-party scripts",
+        "No HSTS header",
+        "No Content-Security-Policy",
+        "No X-Frame-Options",
+        "API/GraphQL signature in public page"
+      ],
+      "analysis": {
+        "has_widget": false,
+        "ai_native": false,
+        "vendors": [],
+        "gen_ai_text": [],
+        "third_party_scripts": [
+          "definitions.sqspcdn.com",
+          "images.squarespace-cdn.com",
+          "static1.squarespace.com"
+        ],
+        "third_party_count": 3,
+        "has_form": false,
+        "pii_inputs": [],
+        "mailto_count": 0,
+        "https": true,
+        "hsts": false,
+        "csp": false,
+        "xfo": false,
+        "cms": "squarespace",
+        "wp_login_exposed": false,
+        "xmlrpc_exposed": false,
+        "api_signature": true,
+        "critical_signals": []
+      }
+    },
+    {
+      "name": "Believe Party Entertainment",
+      "host": "believepartyentertainment.com",
+      "url": "https://www.believepartyentertainment.com/kelowna-birthdays/",
+      "industry": "Event Planning & Services",
+      "city": "Kelowna",
+      "_cached": true,
+      "status": "ELEVATED",
+      "score": 57,
+      "reasons": [
+        "Public chat/automation widget present",
+        "No HSTS header",
+        "No Content-Security-Policy",
+        "No X-Frame-Options",
+        "WordPress login/xmlrpc exposed",
+        "API/GraphQL signature in public page"
+      ],
+      "analysis": {
+        "has_widget": true,
+        "ai_native": false,
+        "vendors": [
+          "Tawk.to"
+        ],
+        "gen_ai_text": [
+          "llm"
+        ],
+        "third_party_scripts": [
+          "www.believepartyentertainment.com",
+          "www.googletagmanager.com"
+        ],
+        "third_party_count": 2,
+        "has_form": false,
+        "pii_inputs": [],
+        "mailto_count": 0,
+        "https": true,
+        "hsts": false,
+        "csp": false,
+        "xfo": false,
+        "cms": "wordpress",
+        "wp_login_exposed": true,
+        "xmlrpc_exposed": true,
+        "api_signature": true,
+        "critical_signals": []
+      }
+    },
+    {
+      "name": "Kelowna Lock Solutions",
+      "host": "kelownalocksolutions.com",
+      "url": "https://kelownalocksolutions.com",
+      "industry": "Locksmith Services",
+      "city": "Kelowna",
+      "_cached": true,
+      "status": "OK",
+      "score": 30,
+      "reasons": [
+        "5 third-party scripts",
+        "No HSTS header",
+        "No Content-Security-Policy",
+        "No X-Frame-Options",
+        "API/GraphQL signature in public page"
+      ],
+      "analysis": {
+        "has_widget": false,
+        "ai_native": false,
+        "vendors": [],
+        "gen_ai_text": [
+          "llm"
+        ],
+        "third_party_scripts": [
+          "definitions.sqspcdn.com",
+          "images.squarespace-cdn.com",
+          "static.elfsight.com",
+          "static1.squarespace.com",
+          "www.googletagmanager.com"
+        ],
+        "third_party_count": 5,
+        "has_form": false,
+        "pii_inputs": [],
+        "mailto_count": 5,
+        "https": true,
+        "hsts": false,
+        "csp": false,
+        "xfo": false,
+        "cms": "squarespace",
+        "wp_login_exposed": false,
+        "xmlrpc_exposed": false,
+        "api_signature": true,
+        "critical_signals": []
+      }
+    },
+    {
+      "name": "Hi-Cube Storage Products",
+      "host": "hicube.com",
+      "url": "https://www.hicube.com",
+      "industry": "Storage",
+      "city": "Kelowna",
+      "_cached": true,
+      "status": "OK",
+      "score": 47,
+      "reasons": [
+        "5 third-party scripts",
+        "Public form collects PII (email/phone)",
+        "No HSTS header",
+        "No Content-Security-Policy",
+        "No X-Frame-Options",
+        "WordPress login/xmlrpc exposed",
+        "API/GraphQL signature in public page"
+      ],
+      "analysis": {
+        "has_widget": false,
+        "ai_native": false,
+        "vendors": [],
+        "gen_ai_text": [],
+        "third_party_scripts": [
+          "ajax.googleapis.com",
+          "cdn.jsdelivr.net",
+          "cdnjs.cloudflare.com",
+          "www.googletagmanager.com",
+          "www.hicube.com"
+        ],
+        "third_party_count": 5,
+        "has_form": true,
+        "pii_inputs": [
+          "search"
+        ],
+        "mailto_count": 0,
+        "https": true,
+        "hsts": false,
+        "csp": false,
+        "xfo": false,
+        "cms": "wordpress",
+        "wp_login_exposed": true,
+        "xmlrpc_exposed": false,
+        "api_signature": true,
+        "critical_signals": []
+      }
+    },
+    {
+      "name": "Biscuits Pets",
+      "host": "biscuitspetservices.com",
+      "url": "https://biscuitspetservices.com/",
+      "industry": "Pet Services",
+      "city": "Kelowna",
+      "_cached": true,
+      "status": "OK",
+      "score": 42,
+      "reasons": [
+        "Public form collects PII (email/phone)",
+        "No HSTS header",
+        "No Content-Security-Policy",
+        "No X-Frame-Options",
+        "WordPress login/xmlrpc exposed",
+        "API/GraphQL signature in public page"
+      ],
+      "analysis": {
+        "has_widget": false,
+        "ai_native": false,
+        "vendors": [],
+        "gen_ai_text": [],
+        "third_party_scripts": [
+          "biscuitspetservices.com",
+          "www.googletagmanager.com"
+        ],
+        "third_party_count": 2,
+        "has_form": true,
+        "pii_inputs": [
+          "text"
+        ],
+        "mailto_count": 2,
+        "https": true,
+        "hsts": false,
+        "csp": false,
+        "xfo": false,
+        "cms": "wordpress",
+        "wp_login_exposed": true,
+        "xmlrpc_exposed": true,
+        "api_signature": true,
+        "critical_signals": []
+      }
+    },
+    {
+      "name": "Okanagan Equipment Appraisals",
+      "host": "okanaganequipmentappraisals.ca",
+      "url": "https://www.okanaganequipmentappraisals.ca",
+      "industry": "Office Services",
+      "city": "Kelowna",
+      "_cached": true,
+      "status": "OK",
+      "score": 40,
+      "reasons": [
+        "3 third-party scripts",
+        "Public form collects PII (email/phone)",
+        "No HSTS header",
+        "No Content-Security-Policy",
+        "No X-Frame-Options",
+        "API/GraphQL signature in public page"
+      ],
+      "analysis": {
+        "has_widget": false,
+        "ai_native": false,
+        "vendors": [],
+        "gen_ai_text": [
+          "llm"
+        ],
+        "third_party_scripts": [
+          "browser.sentry-cdn.com",
+          "static.parastorage.com",
+          "static.wixstatic.com"
+        ],
+        "third_party_count": 3,
+        "has_form": true,
+        "pii_inputs": [
+          "email",
+          "text"
+        ],
+        "mailto_count": 5,
+        "https": true,
+        "hsts": false,
+        "csp": false,
+        "xfo": false,
+        "cms": "wix",
+        "wp_login_exposed": false,
+        "xmlrpc_exposed": false,
+        "api_signature": true,
+        "critical_signals": []
+      }
+    },
+    {
+      "name": "Kelowna Painting Professionals",
+      "host": "kelownapainter.ca",
+      "url": "https://www.kelownapainter.ca",
+      "industry": "Painting Contractors",
+      "city": "Kelowna",
+      "_cached": true,
+      "status": "OK",
+      "score": 20,
+      "reasons": [
+        "No HSTS header",
+        "No Content-Security-Policy",
+        "No X-Frame-Options"
+      ],
+      "analysis": {
+        "has_widget": false,
+        "ai_native": false,
+        "vendors": [],
+        "gen_ai_text": [],
+        "third_party_scripts": [],
+        "third_party_count": 0,
+        "has_form": false,
+        "pii_inputs": [],
+        "mailto_count": 0,
+        "https": true,
+        "hsts": false,
+        "csp": false,
+        "xfo": false,
+        "cms": null,
+        "wp_login_exposed": false,
+        "xmlrpc_exposed": false,
+        "api_signature": false,
+        "critical_signals": []
+      }
+    },
+    {
+      "name": "Shack Shine",
+      "host": "shackshine.com",
+      "url": "https://www.shackshine.com",
+      "industry": "Building Maintenance",
+      "city": "Kelowna",
+      "_cached": true,
+      "status": "OK",
+      "score": 42,
+      "reasons": [
+        "6 third-party scripts (supply-chain surface)",
+        "No HSTS header",
+        "No Content-Security-Policy",
+        "No X-Frame-Options",
+        "WordPress login/xmlrpc exposed",
+        "API/GraphQL signature in public page"
+      ],
+      "analysis": {
+        "has_widget": false,
+        "ai_native": false,
+        "vendors": [],
+        "gen_ai_text": [],
+        "third_party_scripts": [
+          "cdnjs.cloudflare.com",
+          "dev.visualwebsiteoptimizer.com",
+          "www.google.com",
+          "www.googletagmanager.com",
+          "www.shackshine.com",
+          "www.youtube-nocookie.com"
+        ],
+        "third_party_count": 6,
+        "has_form": false,
+        "pii_inputs": [],
+        "mailto_count": 0,
+        "https": true,
+        "hsts": false,
+        "csp": false,
+        "xfo": false,
+        "cms": "wordpress",
+        "wp_login_exposed": true,
+        "xmlrpc_exposed": true,
+        "api_signature": true,
+        "critical_signals": []
+      }
+    },
+    {
+      "name": "CK Catalyst",
+      "host": "ckcatalyst.ca",
+      "url": "https://ckcatalyst.ca",
+      "industry": "Computer Services",
+      "city": "Kelowna",
+      "_cached": true,
+      "status": "ELEVATED",
+      "score": 50,
+      "reasons": [
+        "Public chat/automation widget present",
+        "No HSTS header",
+        "No Content-Security-Policy",
+        "No X-Frame-Options",
+        "API/GraphQL signature in public page"
+      ],
+      "analysis": {
+        "has_widget": true,
+        "ai_native": false,
+        "vendors": [
+          "HubSpot"
+        ],
+        "gen_ai_text": [
+          "ai assistant",
+          "chatbot"
+        ],
+        "third_party_scripts": [],
+        "third_party_count": 0,
+        "has_form": false,
+        "pii_inputs": [],
+        "mailto_count": 0,
+        "https": true,
+        "hsts": false,
+        "csp": false,
+        "xfo": false,
+        "cms": "webflow",
+        "wp_login_exposed": false,
+        "xmlrpc_exposed": false,
+        "api_signature": true,
+        "critical_signals": []
+      }
+    },
+    {
+      "name": "AB Concrete Finishing Ltd",
+      "host": "abconcrete.ca",
+      "url": "https://abconcrete.ca",
+      "industry": "Concrete Contractors",
+      "city": "Kelowna",
+      "_cached": true,
+      "status": "OK",
+      "score": 32,
+      "reasons": [
+        "3 third-party scripts",
+        "No HSTS header",
+        "No Content-Security-Policy",
+        "No X-Frame-Options",
+        "WordPress login/xmlrpc exposed"
+      ],
+      "analysis": {
+        "has_widget": false,
+        "ai_native": false,
+        "vendors": [],
+        "gen_ai_text": [],
+        "third_party_scripts": [
+          "abconcrete.ca",
+          "www.google.com",
+          "www.googletagmanager.com"
+        ],
+        "third_party_count": 3,
+        "has_form": false,
+        "pii_inputs": [],
+        "mailto_count": 0,
+        "https": true,
+        "hsts": false,
+        "csp": false,
+        "xfo": false,
+        "cms": "wordpress",
+        "wp_login_exposed": true,
+        "xmlrpc_exposed": true,
+        "api_signature": false,
+        "critical_signals": []
+      }
+    },
+    {
+      "name": "OgoWash Window Cleaning",
+      "host": "ogowash.ca",
+      "url": "https://ogowash.ca/",
+      "industry": "House Cleaning Services",
+      "city": "Kelowna",
+      "_cached": true,
+      "status": "OK",
+      "score": 30,
+      "reasons": [
+        "Public form collects PII (email/phone)",
+        "No HSTS header",
+        "No Content-Security-Policy",
+        "No X-Frame-Options"
+      ],
+      "analysis": {
+        "has_widget": false,
+        "ai_native": false,
+        "vendors": [],
+        "gen_ai_text": [],
+        "third_party_scripts": [
+          "cdn.trustindex.io",
+          "www.googletagmanager.com"
+        ],
+        "third_party_count": 2,
+        "has_form": true,
+        "pii_inputs": [
+          "email",
+          "tel",
+          "text"
+        ],
+        "mailto_count": 2,
+        "https": true,
+        "hsts": false,
+        "csp": false,
+        "xfo": false,
+        "cms": null,
+        "wp_login_exposed": false,
+        "xmlrpc_exposed": false,
+        "api_signature": false,
+        "critical_signals": []
+      }
+    },
+    {
+      "name": "Bay View Law Kelowna",
+      "host": "bvlaw.ca",
+      "url": "https://bvlaw.ca/employment-lawyer-kelowna/",
+      "industry": "Employment Lawyers",
+      "city": "Kelowna",
+      "_cached": true,
+      "status": "OK",
+      "score": 37,
+      "reasons": [
+        "3 third-party scripts",
+        "No HSTS header",
+        "No Content-Security-Policy",
+        "No X-Frame-Options",
+        "WordPress login/xmlrpc exposed",
+        "API/GraphQL signature in public page"
+      ],
+      "analysis": {
+        "has_widget": false,
+        "ai_native": false,
+        "vendors": [],
+        "gen_ai_text": [],
+        "third_party_scripts": [
+          "bvlaw.ca",
+          "maps.google.com",
+          "www.googletagmanager.com"
+        ],
+        "third_party_count": 3,
+        "has_form": false,
+        "pii_inputs": [],
+        "mailto_count": 0,
+        "https": true,
+        "hsts": false,
+        "csp": false,
+        "xfo": false,
+        "cms": "wordpress",
+        "wp_login_exposed": true,
+        "xmlrpc_exposed": true,
+        "api_signature": true,
+        "critical_signals": []
+      }
+    },
+    {
+      "name": "AAcme Towing Inc",
+      "host": "aacmetowingkelowna.com",
+      "url": "https://www.aacmetowingkelowna.com/",
+      "industry": "Towing Services",
+      "city": "Kelowna",
+      "status": "OK",
+      "score": 32,
+      "reasons": [
+        "No HSTS header",
+        "No Content-Security-Policy",
+        "No X-Frame-Options",
+        "WordPress login/xmlrpc exposed",
+        "API/GraphQL signature in public page"
+      ],
+      "analysis": {
+        "has_widget": false,
+        "ai_native": false,
+        "vendors": [],
+        "gen_ai_text": [],
+        "third_party_scripts": [
+          "www.aacmetowingkelowna.com",
+          "www.googletagmanager.com"
+        ],
+        "third_party_count": 2,
+        "has_form": false,
+        "pii_inputs": [
+          "search"
+        ],
+        "mailto_count": 1,
+        "https": true,
+        "hsts": false,
+        "csp": false,
+        "xfo": false,
+        "cms": "wordpress",
+        "wp_login_exposed": true,
+        "xmlrpc_exposed": true,
+        "api_signature": true,
+        "critical_signals": []
+      }
+    },
+    {
+      "name": "Xray Home Inspections",
+      "host": "xrayhomeinspections.ca",
+      "url": "https://xrayhomeinspections.ca/",
+      "industry": "Home Inspections",
+      "city": "West Kelowna",
+      "status": "OK",
+      "score": 16,
+      "reasons": [
+        "No HSTS header",
+        "No Content-Security-Policy"
+      ],
+      "analysis": {
+        "has_widget": false,
+        "ai_native": false,
+        "vendors": [],
+        "gen_ai_text": [],
+        "third_party_scripts": [
+          "xrayhomeinspections.ca"
+        ],
+        "third_party_count": 1,
+        "has_form": false,
+        "pii_inputs": [],
+        "mailto_count": 0,
+        "https": true,
+        "hsts": false,
+        "csp": false,
+        "xfo": true,
+        "cms": null,
+        "wp_login_exposed": false,
+        "xmlrpc_exposed": false,
+        "api_signature": false,
+        "critical_signals": []
+      }
+    },
+    {
+      "name": "Kelowna Knife and Tool Sharpening Company LTD",
+      "host": "kelownaknifeandtool.com",
+      "url": "https://kelownaknifeandtool.com",
+      "industry": "Business",
+      "city": "Kelowna",
+      "status": "OK",
+      "score": 22,
+      "reasons": [
+        "3 third-party scripts",
+        "No Content-Security-Policy",
+        "No X-Frame-Options",
+        "API/GraphQL signature in public page"
+      ],
+      "analysis": {
+        "has_widget": false,
+        "ai_native": false,
+        "vendors": [],
+        "gen_ai_text": [
+          "llm"
+        ],
+        "third_party_scripts": [
+          "browser.sentry-cdn.com",
+          "static.parastorage.com",
+          "static.wixstatic.com"
+        ],
+        "third_party_count": 3,
+        "has_form": false,
+        "pii_inputs": [],
+        "mailto_count": 1,
+        "https": true,
+        "hsts": true,
+        "csp": false,
+        "xfo": false,
+        "cms": "wix",
+        "wp_login_exposed": false,
+        "xmlrpc_exposed": false,
+        "api_signature": true,
+        "critical_signals": []
+      }
+    },
+    {
+      "name": "Upclean Cleaning Services",
+      "host": "upclean.ca",
+      "url": "https://upclean.ca",
+      "industry": "Building Maintenance",
+      "city": "Kelowna",
+      "status": "OK",
+      "score": 10,
+      "reasons": [
+        "Public form collects PII (email/phone)"
+      ],
+      "analysis": {
+        "has_widget": false,
+        "ai_native": false,
+        "vendors": [],
+        "gen_ai_text": [],
+        "third_party_scripts": [
+          "www.clarity.ms"
+        ],
+        "third_party_count": 1,
+        "has_form": true,
+        "pii_inputs": [
+          "email",
+          "text"
+        ],
+        "mailto_count": 2,
+        "https": true,
+        "hsts": true,
+        "csp": true,
+        "xfo": true,
+        "cms": null,
+        "wp_login_exposed": false,
+        "xmlrpc_exposed": false,
+        "api_signature": false,
+        "critical_signals": []
+      }
+    },
+    {
+      "name": "Vi, Your Neighbourhood Gym",
+      "host": "vifit.ca",
+      "url": "https://www.vifit.ca",
+      "industry": "Health Fitness Club & Gyms",
+      "city": "Kelowna",
+      "status": "OK",
+      "score": 4,
+      "reasons": [
+        "No X-Frame-Options"
+      ],
+      "analysis": {
+        "has_widget": false,
+        "ai_native": false,
+        "vendors": [],
+        "gen_ai_text": [
+          "llm"
+        ],
+        "third_party_scripts": [
+          "img1.wsimg.com",
+          "www.googletagmanager.com"
+        ],
+        "third_party_count": 2,
+        "has_form": false,
+        "pii_inputs": [],
+        "mailto_count": 2,
+        "https": true,
+        "hsts": true,
+        "csp": true,
+        "xfo": false,
+        "cms": "godaddy",
+        "wp_login_exposed": false,
+        "xmlrpc_exposed": false,
+        "api_signature": false,
+        "critical_signals": []
+      }
+    },
+    {
+      "name": "Dolly Boyz Moving",
+      "host": "dollyboyz.ca",
+      "url": "https://dollyboyz.ca",
+      "industry": "Moving and Storage Services",
+      "city": "Kelowna",
+      "status": "OK",
+      "score": 25,
+      "reasons": [
+        "No HSTS header",
+        "No Content-Security-Policy",
+        "No X-Frame-Options",
+        "API/GraphQL signature in public page"
+      ],
+      "analysis": {
+        "has_widget": false,
+        "ai_native": false,
+        "vendors": [],
+        "gen_ai_text": [],
+        "third_party_scripts": [
+          "www.google.com",
+          "www.googletagmanager.com"
+        ],
+        "third_party_count": 2,
+        "has_form": false,
+        "pii_inputs": [],
+        "mailto_count": 0,
+        "https": true,
+        "hsts": false,
+        "csp": false,
+        "xfo": false,
+        "cms": null,
+        "wp_login_exposed": false,
+        "xmlrpc_exposed": false,
+        "api_signature": true,
+        "critical_signals": []
+      }
+    },
+    {
+      "name": "Royal Auto Styling Ltd",
+      "host": "royalautostyling.ca",
+      "url": "https://royalautostyling.ca/",
+      "industry": "Auto Service & Repair",
+      "city": "Kelowna",
+      "status": "OK",
+      "score": 14,
+      "reasons": [
+        "Public form collects PII (email/phone)",
+        "No X-Frame-Options"
+      ],
+      "analysis": {
+        "has_widget": false,
+        "ai_native": false,
+        "vendors": [],
+        "gen_ai_text": [
+          "llm"
+        ],
+        "third_party_scripts": [
+          "www.googletagmanager.com"
+        ],
+        "third_party_count": 1,
+        "has_form": true,
+        "pii_inputs": [
+          "text"
+        ],
+        "mailto_count": 2,
+        "https": true,
+        "hsts": true,
+        "csp": true,
+        "xfo": false,
+        "cms": "godaddy",
+        "wp_login_exposed": false,
+        "xmlrpc_exposed": false,
+        "api_signature": false,
+        "critical_signals": []
+      }
+    },
+    {
+      "name": "Interactive Counselling Kelowna",
+      "host": "interactivecounselling.ca",
+      "url": "https://interactivecounselling.ca/kelowna-counselling/",
+      "industry": "Office Services",
+      "city": "Kelowna",
+      "status": "OK",
+      "score": 42,
+      "reasons": [
+        "Public form collects PII (email/phone)",
+        "No HSTS header",
+        "No Content-Security-Policy",
+        "No X-Frame-Options",
+        "WordPress login/xmlrpc exposed",
+        "API/GraphQL signature in public page"
+      ],
+      "analysis": {
+        "has_widget": false,
+        "ai_native": false,
+        "vendors": [],
+        "gen_ai_text": [
+          "ai assistant",
+          "chatbot",
+          "llm"
+        ],
+        "third_party_scripts": [
+          "interactivecounselling.ca",
+          "www.google.com"
+        ],
+        "third_party_count": 2,
+        "has_form": true,
+        "pii_inputs": [
+          "text"
+        ],
+        "mailto_count": 1,
+        "https": true,
+        "hsts": false,
+        "csp": false,
+        "xfo": false,
+        "cms": "wordpress",
+        "wp_login_exposed": true,
+        "xmlrpc_exposed": true,
+        "api_signature": true,
+        "critical_signals": []
+      }
+    },
+    {
+      "name": "Evergreen Building Maintenance Inc.",
+      "host": "evergreenmaintenance.ca",
+      "url": "https://evergreenmaintenance.ca/",
+      "industry": "Office Services",
+      "city": "Kelowna",
+      "status": "OK",
+      "score": 37,
+      "reasons": [
+        "5 third-party scripts",
+        "No HSTS header",
+        "No Content-Security-Policy",
+        "No X-Frame-Options",
+        "WordPress login/xmlrpc exposed",
+        "API/GraphQL signature in public page"
+      ],
+      "analysis": {
+        "has_widget": false,
+        "ai_native": false,
+        "vendors": [],
+        "gen_ai_text": [
+          "llm"
+        ],
+        "third_party_scripts": [
+          "ct.pinterest.com",
+          "emtkdbs8koy.exactdn.com",
+          "www.facebook.com",
+          "www.googletagmanager.com",
+          "www.youtube.com"
+        ],
+        "third_party_count": 5,
+        "has_form": false,
+        "pii_inputs": [
+          "tel"
+        ],
+        "mailto_count": 0,
+        "https": true,
+        "hsts": false,
+        "csp": false,
+        "xfo": false,
+        "cms": "wordpress",
+        "wp_login_exposed": true,
+        "xmlrpc_exposed": true,
+        "api_signature": true,
+        "critical_signals": []
+      }
+    },
+    {
+      "name": "Upbeat Music Academy Kelowna",
+      "host": "upbeatmusicacademy.ca",
+      "url": "https://upbeatmusicacademy.ca",
+      "industry": "Music Schools",
+      "city": "Kelowna",
+      "status": "OK",
+      "score": 32,
+      "reasons": [
+        "4 third-party scripts",
+        "No HSTS header",
+        "No Content-Security-Policy",
+        "No X-Frame-Options",
+        "WordPress login/xmlrpc exposed"
+      ],
+      "analysis": {
+        "has_widget": false,
+        "ai_native": false,
+        "vendors": [],
+        "gen_ai_text": [],
+        "third_party_scripts": [
+          "cdn-lmngn.nitrocdn.com",
+          "upbeatmusicacademy.ca",
+          "www.google.com",
+          "www.youtube.com"
+        ],
+        "third_party_count": 4,
+        "has_form": false,
+        "pii_inputs": [],
+        "mailto_count": 0,
+        "https": true,
+        "hsts": false,
+        "csp": false,
+        "xfo": false,
+        "cms": "wordpress",
+        "wp_login_exposed": true,
+        "xmlrpc_exposed": false,
+        "api_signature": false,
+        "critical_signals": []
+      }
+    },
+    {
+      "name": "SFY Information Technology",
+      "host": "sfy.ca",
+      "url": "https://www.sfy.ca",
+      "industry": "Computer Services",
+      "city": "Kelowna",
+      "status": "OK",
+      "score": 47,
+      "reasons": [
+        "5 third-party scripts",
+        "Public form collects PII (email/phone)",
+        "No HSTS header",
+        "No Content-Security-Policy",
+        "No X-Frame-Options",
+        "WordPress login/xmlrpc exposed",
+        "API/GraphQL signature in public page"
+      ],
+      "analysis": {
+        "has_widget": false,
+        "ai_native": false,
+        "vendors": [],
+        "gen_ai_text": [],
+        "third_party_scripts": [
+          "messenger.chatgenie.io",
+          "sfy.ca",
+          "www.clarity.ms",
+          "www.google.com",
+          "www.googletagmanager.com"
+        ],
+        "third_party_count": 5,
+        "has_form": true,
+        "pii_inputs": [
+          "email",
+          "tel",
+          "text"
+        ],
+        "mailto_count": 0,
+        "https": true,
+        "hsts": false,
+        "csp": false,
+        "xfo": false,
+        "cms": "wordpress",
+        "wp_login_exposed": true,
+        "xmlrpc_exposed": true,
+        "api_signature": true,
+        "critical_signals": []
+      }
+    },
+    {
+      "name": "The Plumbinators",
+      "host": "theplumbinators.com",
+      "url": "https://theplumbinators.com/",
+      "industry": "Plumbing Contractors",
+      "city": "Kelowna",
+      "status": "ELEVATED",
+      "score": 62,
+      "reasons": [
+        "Public chat/automation widget present",
+        "5 third-party scripts",
+        "No HSTS header",
+        "No Content-Security-Policy",
+        "No X-Frame-Options",
+        "WordPress login/xmlrpc exposed",
+        "API/GraphQL signature in public page"
+      ],
+      "analysis": {
+        "has_widget": true,
+        "ai_native": false,
+        "vendors": [],
+        "gen_ai_text": [],
+        "third_party_scripts": [
+          "static.elfsight.com",
+          "theplumbinators.com",
+          "use.fontawesome.com",
+          "www.google.com",
+          "www.googletagmanager.com"
+        ],
+        "third_party_count": 5,
+        "has_form": false,
+        "pii_inputs": [],
+        "mailto_count": 1,
+        "https": true,
+        "hsts": false,
+        "csp": false,
+        "xfo": false,
+        "cms": "wordpress",
+        "wp_login_exposed": true,
+        "xmlrpc_exposed": true,
+        "api_signature": true,
+        "critical_signals": []
+      }
+    }
+  ]
+}

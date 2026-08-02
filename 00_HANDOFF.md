@@ -37,7 +37,6 @@
 ## Open items for Malik
 - Approve Phase 0 build start.
 - Sophia decision (deadline Aug 1) and re-contacting Saji/Ben — separate from SEB, on his plate.
-- Bankruptcy constraint: build assets now, defer income until discharge (Nov 2026).
 
 ## Directories / files that exist right now
 - `C:\Users\mbapt\src\seb\` — created, empty except this handoff.

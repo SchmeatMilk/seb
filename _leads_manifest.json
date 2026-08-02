@@ -1,0 +1,339 @@
+{
+  "generated": "2026-07-13",
+  "count": 37,
+  "leads": [
+    {
+      "name": "Acme Plumbing",
+      "url": "https://acmeplumbing.ca",
+      "host": "acmeplumbing.ca",
+      "phone": "+1-555-111-2222",
+      "city": "Kelowna",
+      "industry": "Plumbing",
+      "source": "2026-06-25.csv"
+    },
+    {
+      "name": "Green landscaping",
+      "url": "https://greenlandscaping.com",
+      "host": "greenlandscaping.com",
+      "phone": "+1-555-333-4444",
+      "city": "Kelowna",
+      "industry": "Landscaping",
+      "source": "2026-06-25.csv"
+    },
+    {
+      "name": "HeatCo HVAC",
+      "url": "https://heatcohvac.com",
+      "host": "heatcohvac.com",
+      "phone": "+1-555-555-6666",
+      "city": "Kelowna",
+      "industry": "HVAC",
+      "source": "2026-06-25.csv"
+    },
+    {
+      "name": "NexaTech",
+      "url": "https://nexa.tech",
+      "host": "nexa.tech",
+      "phone": "+1-555-101-0101",
+      "city": "Kelowna",
+      "industry": "Software",
+      "source": "2026-06-25.csv"
+    },
+    {
+      "name": "Polaris Marketing",
+      "url": "https://polaris.ca",
+      "host": "polaris.ca",
+      "phone": "+1-555-202-0202",
+      "city": "Kelowna",
+      "industry": "Marketing",
+      "source": "2026-06-25.csv"
+    },
+    {
+      "name": "Apex Staffing",
+      "url": "https://apexstaffing.com",
+      "host": "apexstaffing.com",
+      "phone": "+1-555-303-0303",
+      "city": "Kelowna",
+      "industry": "Staffing",
+      "source": "2026-06-25.csv"
+    },
+    {
+      "name": "CK Catalyst",
+      "url": "https://accounts.google.com/o/oauth2/auth?response_type=code&access_type=online&client_id=253913544183-ukdrv6hajlciduct5s40675rp6g4gpbg.apps.googleusercontent.com&redirect_uri=https%3A%2F%2Fkelowna.biz%2Findex.php%3Fpage%3Dcustom%26route%3Dgoogle-redirect&state&scope=email%20profile&approval_prompt=auto",
+      "host": "accounts.google.com",
+      "phone": "+1 (250) 470-7940",
+      "city": "Kelowna",
+      "industry": "Computer Services",
+      "source": "smartsmb_20260702_161850.csv"
+    },
+    {
+      "name": "CK Catalyst",
+      "url": "https://maps.google.ca/maps?q=1710 Richter Street, Kelowna, British Columbia, Canada",
+      "host": "maps.google.ca",
+      "phone": "+1 (250) 470-7940",
+      "city": "Kelowna",
+      "industry": "Computer Services",
+      "source": "smartsmb_20260702_161952.csv"
+    },
+    {
+      "name": "City Towing",
+      "url": "https://citytowingkelowna.ca",
+      "host": "citytowingkelowna.ca",
+      "phone": "250-300-5757",
+      "city": "Kelowna",
+      "industry": "Towing Services",
+      "source": "smartsmb_20260702_161952.csv"
+    },
+    {
+      "name": "Benito's Concrete",
+      "url": "https://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fkelowna.biz%2Fbusiness%2Fconcrete-contractors%2Fbenito-s-concrete_i4&title=Benito's Concrete",
+      "host": "linkedin.com",
+      "phone": "2508261024",
+      "city": "Kelowna",
+      "industry": "Concrete Contractors",
+      "source": "smartsmb_20260702_161952.csv"
+    },
+    {
+      "name": "InstantTalk",
+      "url": "https://www.instanttalk.online",
+      "host": "instanttalk.online",
+      "phone": "604-340-3030",
+      "city": "Kelowna",
+      "industry": "Business",
+      "source": "smartsmb_20260702_161952.csv"
+    },
+    {
+      "name": "ClearSignal Wireless",
+      "url": "https://www.clearsignalwireless.ca",
+      "host": "clearsignalwireless.ca",
+      "phone": "6043403030",
+      "city": "Kelowna",
+      "industry": "Business",
+      "source": "smartsmb_20260702_161952.csv"
+    },
+    {
+      "name": "Veridian Painting",
+      "url": "https://veridianpainting.com",
+      "host": "veridianpainting.com",
+      "phone": "2508019163",
+      "city": "West Kelowna",
+      "industry": "Painting Contractors",
+      "source": "smartsmb_20260702_161952.csv"
+    },
+    {
+      "name": "Believe Party Entertainment",
+      "url": "https://www.believepartyentertainment.com/kelowna-birthdays/",
+      "host": "believepartyentertainment.com",
+      "phone": "2509999255",
+      "city": "Kelowna",
+      "industry": "Event Planning & Services",
+      "source": "smartsmb_20260702_161952.csv"
+    },
+    {
+      "name": "Kelowna Lock Solutions",
+      "url": "https://kelownalocksolutions.com",
+      "host": "kelownalocksolutions.com",
+      "phone": "2508695367",
+      "city": "Kelowna",
+      "industry": "Locksmith Services",
+      "source": "smartsmb_20260702_161952.csv"
+    },
+    {
+      "name": "Hi-Cube Storage Products",
+      "url": "https://www.hicube.com",
+      "host": "hicube.com",
+      "phone": "250-870-3836",
+      "city": "Kelowna",
+      "industry": "Storage",
+      "source": "smartsmb_20260702_161952.csv"
+    },
+    {
+      "name": "Biscuits Pets",
+      "url": "https://biscuitspetservices.com/",
+      "host": "biscuitspetservices.com",
+      "phone": "1-778-837-7508",
+      "city": "Kelowna",
+      "industry": "Pet Services",
+      "source": "smartsmb_20260702_161952.csv"
+    },
+    {
+      "name": "Okanagan Equipment Appraisals",
+      "url": "https://www.okanaganequipmentappraisals.ca",
+      "host": "okanaganequipmentappraisals.ca",
+      "phone": "778-946-0315",
+      "city": "Kelowna",
+      "industry": "Office Services",
+      "source": "smartsmb_20260702_161952.csv"
+    },
+    {
+      "name": "Kelowna Painting Professionals",
+      "url": "https://www.kelownapainter.ca",
+      "host": "kelownapainter.ca",
+      "phone": "7787714894",
+      "city": "Kelowna",
+      "industry": "Painting Contractors",
+      "source": "smartsmb_20260702_161952.csv"
+    },
+    {
+      "name": "Shack Shine",
+      "url": "https://www.shackshine.com",
+      "host": "shackshine.com",
+      "phone": "1-888-808-7751",
+      "city": "Kelowna",
+      "industry": "Building Maintenance",
+      "source": "smartsmb_20260702_161952.csv"
+    },
+    {
+      "name": "CK Catalyst",
+      "url": "https://ckcatalyst.ca",
+      "host": "ckcatalyst.ca",
+      "phone": "+1 (250) 470-7940",
+      "city": "Kelowna",
+      "industry": "Computer Services",
+      "source": "smartsmb_20260702_162033.csv"
+    },
+    {
+      "name": "AB Concrete Finishing Ltd",
+      "url": "https://abconcrete.ca",
+      "host": "abconcrete.ca",
+      "phone": "250-718-0700",
+      "city": "Kelowna",
+      "industry": "Concrete Contractors",
+      "source": "smartsmb_20260702_162033.csv"
+    },
+    {
+      "name": "Benito's Concrete",
+      "url": "https://twitter.com/share?url=https%3A%2F%2Fkelowna.biz%2Fbusiness%2Fconcrete-contractors%2Fbenito-s-concrete_i4&text=Benito's Concrete",
+      "host": "twitter.com",
+      "phone": "2508261024",
+      "city": "Kelowna",
+      "industry": "Concrete Contractors",
+      "source": "smartsmb_20260702_162033.csv"
+    },
+    {
+      "name": "OgoWash Window Cleaning",
+      "url": "https://ogowash.ca/",
+      "host": "ogowash.ca",
+      "phone": "7785837807",
+      "city": "Kelowna",
+      "industry": "House Cleaning Services",
+      "source": "smartsmb_20260702_162033.csv"
+    },
+    {
+      "name": "Bay View Law Kelowna",
+      "url": "https://bvlaw.ca/employment-lawyer-kelowna/",
+      "host": "bvlaw.ca",
+      "phone": "(604) 416-2610",
+      "city": "Kelowna",
+      "industry": "Employment Lawyers",
+      "source": "smartsmb_20260702_162033.csv"
+    },
+    {
+      "name": "AAcme Towing Inc",
+      "url": "https://www.aacmetowingkelowna.com/",
+      "host": "aacmetowingkelowna.com",
+      "phone": "2504914949",
+      "city": "Kelowna",
+      "industry": "Towing Services",
+      "source": "smartsmb_20260702_162033.csv"
+    },
+    {
+      "name": "Xray Home Inspections",
+      "url": "https://xrayhomeinspections.ca/",
+      "host": "xrayhomeinspections.ca",
+      "phone": "2508016825",
+      "city": "West Kelowna",
+      "industry": "Home Inspections",
+      "source": "smartsmb_20260702_162033.csv"
+    },
+    {
+      "name": "Kelowna Knife and Tool Sharpening Company LTD",
+      "url": "https://kelownaknifeandtool.com",
+      "host": "kelownaknifeandtool.com",
+      "phone": "250-212-2694",
+      "city": "Kelowna",
+      "industry": "Business",
+      "source": "smartsmb_20260702_162033.csv"
+    },
+    {
+      "name": "Upclean Cleaning Services",
+      "url": "https://upclean.ca",
+      "host": "upclean.ca",
+      "phone": "(250)899-0474",
+      "city": "Kelowna",
+      "industry": "Building Maintenance",
+      "source": "smartsmb_20260702_162033.csv"
+    },
+    {
+      "name": "Vi, Your Neighbourhood Gym",
+      "url": "https://www.vifit.ca",
+      "host": "vifit.ca",
+      "phone": "(778) 538-4998",
+      "city": "Kelowna",
+      "industry": "Health Fitness Club & Gyms",
+      "source": "smartsmb_20260702_162033.csv"
+    },
+    {
+      "name": "Dolly Boyz Moving",
+      "url": "https://dollyboyz.ca",
+      "host": "dollyboyz.ca",
+      "phone": "2508695295",
+      "city": "Kelowna",
+      "industry": "Moving and Storage Services",
+      "source": "smartsmb_20260702_162033.csv"
+    },
+    {
+      "name": "Royal Auto Styling Ltd",
+      "url": "https://royalautostyling.ca/",
+      "host": "royalautostyling.ca",
+      "phone": "2506177545",
+      "city": "Kelowna",
+      "industry": "Auto Service & Repair",
+      "source": "smartsmb_20260702_162033.csv"
+    },
+    {
+      "name": "Interactive Counselling Kelowna",
+      "url": "https://interactivecounselling.ca/kelowna-counselling/",
+      "host": "interactivecounselling.ca",
+      "phone": "2508594485",
+      "city": "Kelowna",
+      "industry": "Office Services",
+      "source": "smartsmb_20260702_162033.csv"
+    },
+    {
+      "name": "Evergreen Building Maintenance Inc.",
+      "url": "https://evergreenmaintenance.ca/",
+      "host": "evergreenmaintenance.ca",
+      "phone": "(250) 869-5165",
+      "city": "Kelowna",
+      "industry": "Office Services",
+      "source": "smartsmb_20260702_162033.csv"
+    },
+    {
+      "name": "Upbeat Music Academy Kelowna",
+      "url": "https://upbeatmusicacademy.ca",
+      "host": "upbeatmusicacademy.ca",
+      "phone": "250-317-3685",
+      "city": "Kelowna",
+      "industry": "Music Schools",
+      "source": "smartsmb_20260702_162033.csv"
+    },
+    {
+      "name": "SFY Information Technology",
+      "url": "https://www.sfy.ca",
+      "host": "sfy.ca",
+      "phone": "8773786730",
+      "city": "Kelowna",
+      "industry": "Computer Services",
+      "source": "smartsmb_20260702_162033.csv"
+    },
+    {
+      "name": "The Plumbinators",
+      "url": "https://theplumbinators.com/",
+      "host": "theplumbinators.com",
+      "phone": "250-300-6963",
+      "city": "Kelowna",
+      "industry": "Plumbing Contractors",
+      "source": "smartsmb_20260709_080155.csv"
+    }
+  ]
+}

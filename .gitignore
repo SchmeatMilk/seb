@@ -11,3 +11,12 @@ __pycache__/
 # Build/test artifacts
 output/*.pdf
 tests/_test_*.db
+
+# Large/vendor dirs — never commit third-party packages
+.venv/
+.engines-venv/
+.pyrit-venv/
+node_modules/
+_cache/
+.escalation_queue.jsonl
+*.jsonl
