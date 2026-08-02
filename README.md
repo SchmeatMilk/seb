@@ -10,15 +10,13 @@ This is our public OSS tool: what we use for prospect assessments, available for
 ## Quick Start
 
 ```bash
-pip install seb-scan
+git clone https://github.com/SchmeatMilk/seb.git
+cd seb/oss-tool
+pip install -e .
 seb scan example.com
 ```
 
-Or without pip:
-
-```bash
-python seb scan example.com
-```
+> Note: `seb-scan` is not published to PyPI. Install from the source checkout above.
 
 ## Example Output
 
