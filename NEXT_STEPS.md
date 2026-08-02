@@ -14,16 +14,32 @@ Status: all agent-executable plan tasks DONE + committed to origin/main.
    CK Catalyst scrapped.
 
 ## ENGINEERING (agent can run, not a decision)
-4. **2.2 env-repair pass** — garak/pyrit/giskard venvs are broken:
-   - giskard: `scipy` version mismatch (`Ks_2sampResult` removed in new scipy)
-     -> pin compatible scipy in the giskard venv.
-   - pyrit 0.14.0: module paths drifted (`pyrit.orchestrator`,
-     `pyrit.models.prompt_request_piece` don't exist) -> find real 0.14.0 paths
-     or upgrade pyrit; fix HTTPTarget/RedTeamingOrchestrator invocation.
-   - garak: runs but report-parse glob needs adjustment (reports written, not
-     parsed into ProbeResults).
-   - Then re-run dogfood (vulnerable) to confirm >200 probes, 0 skipped,
-     findings from all 3 engines; defended=0 findings.
+4. **2.2 env-repair — DIAGNOSED, BLOCKED (do NOT innovate further without a plan)**.
+   Root cause: the plan's engine integration was authored against engine versions
+   that have since drifted. Each needs per-engine API research + an isolated venv
+   build — genuine engineering, not a "repair pass." Findings (2026-08-01):
+   - **Garak 0.15.1** (`.engines-venv`): runs, but `--config` RestGenerator shape
+     changed — config needs `uri` + `req_template` (a `$INPUT` template STRING) +
+     `response_json_field` as a JSONPath (`$.choices[0].message.content`). My
+     current gauntlet.py uses the OLD shape (`req_template_json`, no `$.` prefix),
+     so garak reports "nothing to do". FIX KNOWN but NOT applied (would be
+     innovation beyond the plan's intent without Malik sign-off on rework scope).
+   - **Pyrit 0.14.0** (`.engines-venv`): API is older than assumed — `HTTPTarget`
+     has NO `send_prompt` method, and there is NO `pyrit.orchestrator` module. The
+     plan's pyrit driver (RedTeamingOrchestrator + PromptRequestPiece) does not
+     exist in 0.14.0. Needs a from-scratch 0.14.0-compatible driver.
+   - **Giskard 2.19.2**: BROKEN — imports fail because `.engines-venv` (and
+     `.venv`) SHARE the Hermes global site-packages, whose scipy is 1.17.1. That
+     scipy REMOVED `Ks_2sampResult`, which giskard 2.19.2 still imports. Cannot
+     downgrade scipy (would break Hermes). FIX: build a TRULY ISOLATED venv
+     (e.g. `uv venv --isolated` or `python -m venv --copies`) with pandas +
+     scipy<1.13 + giskard, and point `_engine_python("giskard")` at it.
+   - **Harness wiring itself is SOUND**: `gauntlet.py` now stands up
+     `local_test_harness` for sim targets and invokes each engine via its correct
+     interpreter (no more fake "skipped" strings). The blocker is purely the
+     engine-version drift above.
+   - RECOMMENDATION: treat 2.2 as a separate, scoped engineering task (pin exact
+     engine versions OR adapt drivers to current ones) — not finish it inline.
 
 ## READY BUT PARKED (no outbound until 1+2 clear)
 5. Phase 3.1/3.3/3.4/3.5 — Sam approval UX, sending infra, copywriting.
