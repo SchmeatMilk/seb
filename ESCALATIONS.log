@@ -21,3 +21,5 @@
 2026-08-02T05:05:56.600297Z  [linkedin_draft]  Draft post: SEB's new MCP-security tier covers tool-poisoning and prompt-injection across agent surfaces — thoughts before I publish?
 2026-08-02T05:12:10.656565Z  [critical_on_retainer]  CRITICAL finding on retainer client Acme: prompt-injection in their support chatbot exfiltrated the system prompt. Impact: full disclosure.
 2026-08-02T05:12:10.682484Z  [linkedin_draft]  Draft post: SEB's new MCP-security tier covers tool-poisoning and prompt-injection across agent surfaces — thoughts before I publish?
+2026-08-02T05:29:16.201162Z  [critical_on_retainer]  CRITICAL finding on retainer client Acme: prompt-injection in their support chatbot exfiltrated the system prompt. Impact: full disclosure.
+2026-08-02T05:29:16.225377Z  [linkedin_draft]  Draft post: SEB's new MCP-security tier covers tool-poisoning and prompt-injection across agent surfaces — thoughts before I publish?
