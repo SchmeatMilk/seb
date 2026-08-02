@@ -1,0 +1,7 @@
+{
+  "gate_a_autonomous_send": false,
+  "gate_b_sam_signs_own_name": false,
+  "_note": "Only Malik edits this file. Both default false. Neither implies the other.",
+  "_gate_a": "false = every message goes to client_review/ for Malik. true = Sam sends directly.",
+  "_gate_b": "false = signs 'Malik, from SEB'. true = signs as Sam."
+}

@@ -1,0 +1,18 @@
+{
+  "_note": "Paths SEB's self-modification tooling is hard-coded to refuse. A non-human edit to any of these is rejected by safety_kernel/kernel_guard.py. Human-authored changes still require Malik's sign-off per P3.",
+  "protected_paths": [
+    "integrity.py",
+    "sam_gates.py",
+    "sam_gates.json",
+    "safety_kernel/",
+    "eval_harness.py",
+    "profiles/seb/SOUL.md"
+  ],
+  "protected_substrings": [
+    "assert_model_acceptable",
+    "gate_a_autonomous_send",
+    "gate_b_sam_signs_own_name",
+    "assert_engagement_completable",
+    "assert_no_unsubstantiated_capability_claim"
+  ]
+}
