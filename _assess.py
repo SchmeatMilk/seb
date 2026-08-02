@@ -2,10 +2,12 @@
 """SEB Lever-9 public-surface assessment (READ-ONLY recon, SCOUT role).
 
 Methodology (bounded by SOUL.md §5 — assessment only, no probing/exploitation):
-  - Single HTTP GET of the public homepage with a browser User-Agent.
+  - Single HTTP GET of the public homepage with a transparent SEB-assessment
+    User-Agent (identifies who we are; no browser spoofing).
   - Inspect response headers + raw HTML for passive, non-intrusive signals.
   - No POSTing, no chatbot interaction, no port scan, no fuzzing, no auth bypass.
   - Transparent heuristic scoring (rubric printed in report header).
+  - robots.txt is honoured; disallowed paths are skipped.
 
 Output: _assessment.json  -> later rendered into risk_scores.md
 """
@@ -16,8 +18,9 @@ HOME = os.path.dirname(os.path.abspath(__file__))
 CACHE = os.path.join(HOME, "_cache")
 os.makedirs(CACHE, exist_ok=True)
 
-UA = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
-      "(KHTML, like Gecko) Chrome/124.0 Safari/537.36")
+# Honest identification (Task 2.6 / E1): no browser spoof. The UA names SEB and
+# points at a contact URL so any site owner can recognize the assessment traffic.
+UA = "SEB-Assessment/1.0 (+https://seb-security.com/assessment)"
 
 GENERIC = {"accounts.google.com", "linkedin.com", "www.linkedin.com",
            "maps.google.ca", "maps.google.com", "twitter.com", "www.twitter.com",
@@ -74,7 +77,28 @@ CMS_SIG = {
 }
 
 
+def _robots_allowed(url: str) -> bool:
+    """Honour robots.txt for the target host (Task 2.6 / E1)."""
+    try:
+        from urllib.parse import urlparse
+        host = urlparse(url).netloc or url
+        base = f"{urlparse(url).scheme or 'https'}://{host}"
+        rp = None
+        try:
+            from urllib.robotparser import RobotFileParser
+            rp = RobotFileParser()
+            rp.set_url(base.rstrip("/") + "/robots.txt")
+            rp.read()
+        except Exception:
+            return True  # if robots.txt is unreadable, default to allowed
+        return rp.can_fetch(UA, url)
+    except Exception:
+        return True
+
+
 def fetch(url):
+    if not _robots_allowed(url):
+        return None, "robots.txt disallows fetching this path"
     try:
         r = requests.get(url, headers={"User-Agent": UA}, timeout=14,
                          allow_redirects=True, stream=False)
@@ -140,19 +164,12 @@ def analyze(html, headers, final_url):
     api_sig = bool(re.search(r'/(api|graphql|v1|v2)/', low)) or "graphql" in low
 
     # --- sensitive public exposure (genuine critical signal) ---
+    # NOTE: Task 2.6 / E1 removed the unauthenticated credential-regex sweep of
+    # public HTML. It produced no sales value and read as reconnaissance,
+    # contradicting SEB_ENGAGEMENT_TERMS.md's "no automated scanning" promise.
+    # Only genuinely exposed secrets surfaced THROUGH an authorized engagement
+    # (with written consent) are reported — never via this pre-sales pass.
     critical = []
-    # exclude benign framework tokens (WPForms data-token CSRF nonce, etc.)
-    for m in re.finditer(r'(api[_-]?key|secret|password)\s*[:=]\s*["\']?[a-z0-9]{16,}', low):
-        pre = low[max(0, m.start()-8):m.start()]
-        if "data-" in pre:
-            continue
-        critical.append("possible secret/credential string in public HTML")
-        break
-    # explicit credential leak pattern: "key":"...long..." inside JS config blocks
-    if re.search(r'"(api[_-]?key|secret|password|access[_-]?token)"\s*:\s*["\'][a-z0-9_\-]{20,}["\']', low):
-        critical.append("possible hardcoded credential in JS/config block")
-    if re.search(r'\.env\b', low) and ("db_" in low or "password" in low):
-        critical.append(".env reference with credentials in public HTML")
 
     return {
         "has_widget": has_widget,

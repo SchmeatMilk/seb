@@ -197,7 +197,7 @@
           <li>100+ targeted probes</li>
           <li>OWASP-mapped findings PDF</li>
           <li>System-prompt &amp; jailbreak tests</li>
-          <li>Turnaround: ~5 business days</li>
+          <li>Turnaround: ~48h</li>
         </ul>
         <a class="btn ghost" href="#intake">Get started</a>
       </div>

@@ -7,6 +7,7 @@ Compiles Handlebars-style templates to HTML + plain text for deliverability.
 import re
 import os
 import json
+from html import unescape as html_unescape
 from pathlib import Path
 from typing import Dict, Any, Optional, Tuple
 from datetime import datetime
@@ -42,10 +43,41 @@ def extract_inline_partials(content: str) -> Dict[str, str]:
     return partials
 
 
+def flatten_context(data: Dict[str, Any], prefix: str = "") -> Dict[str, Any]:
+    """Flatten nested dicts into dotted keys, e.g. {'cta': {'url': x}} -> {'cta.url': x}."""
+    flat: Dict[str, Any] = {}
+    for key, value in data.items():
+        dotted = f"{prefix}{key}"
+        if isinstance(value, dict):
+            flat.update(flatten_context(value, prefix=f"{dotted}."))
+        else:
+            flat[dotted] = value
+    return flat
+
+
+def lookup(context: Dict[str, Any], key: str) -> Any:
+    """Resolve a possibly dotted key ('cta.secondary.url') against a context dict."""
+    current: Any = context
+    for part in key.split('.'):
+        if isinstance(current, dict):
+            current = current.get(part)
+        else:
+            current = getattr(current, part, None)
+        if current is None:
+            return None
+    return current
+
+
 def html_to_text(html: str) -> str:
     """Convert HTML email to plain text version."""
+    # Drop HTML comments first — this includes MSO conditional blocks
+    # (<!--[if mso]> ... <o:PixelsPerInch>96</o:PixelsPerInch> ... <![endif]-->),
+    # whose contents would otherwise leak into the plain-text part.
+    text = re.sub(r'<!--.*?-->', '', html, flags=re.DOTALL)
+    text = re.sub(r'<xml[^>]*>.*?</xml>', '', text, flags=re.DOTALL | re.IGNORECASE)
+
     # Remove style and script tags
-    text = re.sub(r'<style[^>]*>.*?</style>', '', html, flags=re.DOTALL | re.IGNORECASE)
+    text = re.sub(r'<style[^>]*>.*?</style>', '', text, flags=re.DOTALL | re.IGNORECASE)
     text = re.sub(r'<script[^>]*>.*?</script>', '', text, flags=re.DOTALL | re.IGNORECASE)
 
     # Convert common tags
@@ -73,12 +105,10 @@ def html_to_text(html: str) -> str:
     # Remove remaining tags
     text = re.sub(r'<[^>]+>', '', text)
 
-    # Decode HTML entities
-    text = text.replace('&nbsp;', ' ')
-    text = text.replace('&', '&')
-    text = text.replace('<', '<')
-    text = text.replace('>', '>')
-    text = text.replace('"', '"')
+    # Decode HTML entities (the previous hard-coded replacements were no-ops:
+    # e.g. text.replace('&', '&') — the entity literals had been eaten already).
+    text = html_unescape(text)
+    text = text.replace('\u00a0', ' ')
     text = text.replace('\u2019', "'")
     text = text.replace('\u2018', "'")
 
@@ -143,11 +173,13 @@ class SEBEmailCompiler:
 
         body_html = body_match.group(1).strip()
 
-        # Compile base template with body partial
+        # Compile base template with body partial.
+        # NOTE: pystache 0.6.8's Renderer.render() ignores the 3rd positional
+        # `partials` argument — partials must be passed to the Renderer ctor.
         if pystache:
-            renderer = pystache.Renderer()
             all_partials = {**self.partials, "body": body_html}
-            html = renderer.render(self.base_template, full_context, all_partials)
+            renderer = pystache.Renderer(partials=all_partials)
+            html = renderer.render(self.base_template, full_context)
         else:
             # Simple fallback
             html = self.base_template

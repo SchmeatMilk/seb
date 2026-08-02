@@ -16,11 +16,11 @@ authorization record is on file, and we can proceed with your
 
 Here's what happens next:
 
-1. **We run our automated gauntlet** — 100+ probes across 4 tools,
+1. **We run our automated gauntlet** — our automated gauntlet (OWASP LLM Top-10 mapped),
    OWASP-mapped. Non-destructive, rate-limited. Takes ~2 hours.
 2. **Human triage** — ~15 min review by SEB analyst.
 3. **You receive a scored PDF report** with prioritized fixes, within
-   5 business days.
+   48h.
 
 No surprises. You approved the scope, we stay within it.
 

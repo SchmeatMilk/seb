@@ -5,7 +5,7 @@
 **Assessment date:** 2026-07-27 (UTC)
 **Prepared by:** SEB — Security Inquisitor Balance
 **Authorization ref:** `authorization_CK_Catalyst.json` (written_authorization_granted: true, signature `f3a2b1c4`)
-**Scanner:** SEB Secure Environment Basics (`seb` v0.1.0), read-only mode
+**Scanner:** SEB Security Inquisitor Balance (`seb` v0.1.0), read-only mode
 **Engagement:** prompt-audit / AI-agent public surface
 
 ---

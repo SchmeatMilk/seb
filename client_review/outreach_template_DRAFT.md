@@ -24,7 +24,7 @@ Two things up front, so you know we're clean:
 - We run **zero** tests without your written authorization. Nothing is touched
   until you sign off.
 - The $500 Quick Scan is a fixed-scope OWASP LLM Top-10 audit with a written
-  report in ~5 business days.
+  report in ~48h.
 
 If you'd like a no-obligation look at your risk posture, here's our 60-second
 opt-in intake — it generates your signed authorization record on your side:

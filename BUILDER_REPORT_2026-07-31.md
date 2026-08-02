@@ -125,7 +125,7 @@ GCG adversarial suffixes · encoding smuggling (base64/ROT13/unicode) · **multi
 - Accept: `hermes cron list` shows the chain; a forced run on each job succeeds; model-guard doc and reality agree.
 
 **C2. Heavy engines never fire — dogfood is only L1B3RT4S**
-- Evidence: `_try_garak/_try_pyrit/_try_giskard` all append "skipped" for any non-HTTP target. Every dogfood run uses `DefendedSimTarget` (a Python callable) → garak/pyrit/giskard always skipped. 74-probe dogfood ≠ the "100+ probes / 4 tools" you sell.
+- Evidence: `_try_garak/_try_pyrit/_try_giskard` all append "skipped" for any non-HTTP target. Every dogfood run uses `DefendedSimTarget` (a Python callable) → garak/pyrit/giskard always skipped. 74-probe dogfood ≠ the "our automated gauntlet (OWASP LLM Top-10 mapped) / our tooling" you sell.
 - Fix: build **`test_harness.py`** — a local FastAPI/Flask server that wraps `DefendedSimTarget`/`VulnerableSimTarget` on `localhost`, then:
   - garak via `rest` generator (see §5 for the current garak 0.15.x config format — your `_try_garak` uses an outdated generator config shape: current format is `-G rest_target.json` with `RestGenerator { req_template_json_object, response_json_field }`).
   - PyRIT `PromptSendingOrchestrator` + Crescendo/TAP converters against the same endpoint (single + multi-turn).

@@ -122,3 +122,94 @@ def assert_no_unsubstantiated_capability_claim(text: str) -> None:
     for claim, why in FALSE_CLAIMS.items():
         if claim.lower() in low:
             raise IntegrityViolation(f"Unsubstantiated claim {claim!r} in client-facing text. {why}")
+
+
+# ─── Model guard (defect D1 / Task 2.1) ───────────────────────────────────────
+# SEB_MODEL_GUARD.md states the rule in prose and nothing implements it. This is
+# the machine-enforced version: it HOLDS AND ALERTS (raises) rather than letting
+# a security-critical task silently degrade onto a weak model.
+
+#: Acceptable models, primary → last resort. Order is the fallback order.
+MODEL_FALLBACK_CHAIN: tuple[str, ...] = (
+    "nvidia/nemotron-3-ultra-550b-a55b",
+    "nvidia/nemotron-3-super-120b-a12b",
+    "openrouter/gpt-oss-20b:free",
+    "step-3.7-flash:free",
+    "tencent/hy3:free",  # LAST RESORT — non-security-critical tasks only.
+)
+
+#: The last tier is never acceptable for security-critical work.
+LAST_RESORT_MODEL: str = MODEL_FALLBACK_CHAIN[-1]
+
+#: Substrings that identify the forbidden primary, per SEB_MODEL_GUARD.md.
+FORBIDDEN_FOR_SECURITY_CRITICAL: tuple[str, ...] = ("tencent/hy3", "hy3:free")
+
+#: Task kinds SEB_MODEL_GUARD.md names as security-critical, plus the generic labels.
+SECURITY_CRITICAL_TASKS: frozenset[str] = frozenset({
+    "security-critical", "critical",
+    "lead-gen", "risk-score", "retainer", "oss-pr", "msp",
+})
+
+
+def _norm(value: str) -> str:
+    return value.strip().lower()
+
+
+def _chain_index(model: str) -> Optional[int]:
+    """Return the model's tier in MODEL_FALLBACK_CHAIN, tolerating id variants.
+
+    'nvidia/nemotron-3-ultra' and 'nvidia/nemotron-3-ultra-550b-a55b' are the
+    same tier; a provider prefix or a size suffix must not defeat the guard.
+    """
+    m = _norm(model)
+    m_stem = m.split("/")[-1].split(":")[0]
+    for i, entry in enumerate(MODEL_FALLBACK_CHAIN):
+        e = _norm(entry)
+        if m == e:
+            return i
+        e_stem = e.split("/")[-1].split(":")[0]
+        if e_stem and (e_stem in m or (m_stem and m_stem in e_stem)):
+            return i
+    return None
+
+
+def assert_model_acceptable(model: str, task_criticality: str = "security-critical") -> None:
+    """Refuse to run a security-critical task on a forbidden or unvetted model.
+
+    Implements SEB_MODEL_GUARD.md as an executable invariant. Raises
+    IntegrityViolation instead of degrading; the caller must hold and alert.
+
+    Non-security-critical tasks may use any tier, including the last resort.
+    """
+    if not isinstance(model, str) or not model.strip():
+        raise IntegrityViolation(
+            "MODEL GUARD: empty/invalid model identifier. A security-critical task "
+            "may not run on an unidentified model."
+        )
+
+    if _norm(task_criticality) not in SECURITY_CRITICAL_TASKS:
+        return  # Non-critical: the whole chain, last resort included, is permitted.
+
+    m = _norm(model)
+    chain = " → ".join(MODEL_FALLBACK_CHAIN)
+
+    for bad in FORBIDDEN_FOR_SECURITY_CRITICAL:
+        if bad in m:
+            raise IntegrityViolation(
+                f"MODEL GUARD: {model!r} is FORBIDDEN as primary for security-critical "
+                f"task {task_criticality!r} (SEB_MODEL_GUARD.md). HOLD AND ALERT — do not "
+                f"degrade and emit low-quality security work. Acceptable chain: {chain}"
+            )
+
+    idx = _chain_index(model)
+    if idx is None:
+        raise IntegrityViolation(
+            f"MODEL GUARD: {model!r} is not on the vetted fallback chain and may not run "
+            f"security-critical task {task_criticality!r}. Acceptable chain: {chain}"
+        )
+    if idx == len(MODEL_FALLBACK_CHAIN) - 1:
+        raise IntegrityViolation(
+            f"MODEL GUARD: {model!r} is the LAST RESORT tier ({LAST_RESORT_MODEL}) and is "
+            f"permitted only for non-security-critical tasks, not {task_criticality!r}. "
+            f"HOLD AND ALERT. Acceptable chain: {chain}"
+        )

@@ -100,6 +100,8 @@ def main() -> None:
     )
     ns = parser.parse_args()
 
+    start = datetime.datetime.now(datetime.timezone.utc)
+
     output_dir = Path(ns.output_dir).expanduser().resolve()
     output_dir.mkdir(parents=True, exist_ok=True)
 
@@ -183,6 +185,24 @@ def main() -> None:
         datetime.timezone.utc
     ).isoformat()
     save_state(state_path, state)
+
+    # Phase 0 / Task 2.7 (SEB_V2_MASTER_PLAN.md D3): persist an intel_log row so the
+    # pipeline's own audit trail is real. log_intel() exists but was never called —
+    # this wiring closes that gap.
+    try:
+        from client_db import log_intel as _log_intel
+
+        _log_intel(
+            source="L1B3RT4S/CL4R1T4S corpus inventory",
+            new_attacks=len(new_classes),
+            attacks_integrated=len(cur_classes),
+            novel_class=bool(new_classes),
+            run_time_ms=int(
+                (datetime.datetime.now(datetime.timezone.utc) - start).total_seconds() * 1000
+            ),
+        )
+    except Exception as exc:  # never let intel logging break the pipeline
+        print(f"WARNING: failed to write intel_log: {exc}", file=sys.stderr)
 
     sys.exit(0)
 
