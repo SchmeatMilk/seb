@@ -19,10 +19,13 @@ import sys
 import socket
 import urllib.request
 import urllib.error
+import urllib.parse
 from datetime import datetime, timezone
-from typing import Optional
+from typing import Optional, List, Dict, Any
+from concurrent.futures import ThreadPoolExecutor, as_completed
+import time
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"
 
 # ── Output styling ──────────────────────────────────────────────────────────
 GREEN = "\033[92m"
@@ -78,6 +81,24 @@ SECURITY_HEADERS = {
         "label": "Permissions-Policy",
         "desc": "Restricts browser feature access",
     },
+    "Cross-Origin-Opener-Policy": {
+        "good": lambda v: v.strip() in ("same-origin", "same-origin-allow-popups"),
+        "warn": lambda v: bool(v),
+        "label": "COOP",
+        "desc": "Isolates browsing context from cross-origin documents",
+    },
+    "Cross-Origin-Embedder-Policy": {
+        "good": lambda v: v.strip() == "require-corp",
+        "warn": lambda v: bool(v),
+        "label": "COEP",
+        "desc": "Requires cross-origin resources to opt-in via CORP",
+    },
+    "Cross-Origin-Resource-Policy": {
+        "good": lambda v: v.strip() in ("same-origin", "same-site"),
+        "warn": lambda v: bool(v),
+        "label": "CORP",
+        "desc": "Controls which origins can load this resource",
+    },
 }
 
 AI_SURFACES = [
@@ -89,6 +110,15 @@ AI_SURFACES = [
     ("/llms.txt", "LLM instructions file"),
     ("/llms-full.txt", "LLM full instructions"),
     ("/robots.txt", "Robots.txt (may reveal AI crawler rules)"),
+    ("/.well-known/assetlinks.json", "Android App Links (AI agent verification)"),
+    ("/.well-known/apple-app-site-association", "iOS App Links (AI agent verification)"),
+    ("/api/llm", "LLM API endpoint"),
+    ("/api/ai", "AI API endpoint"),
+    ("/api/v1/completions", "OpenAI-compatible completions endpoint"),
+    ("/api/v1/chat/completions", "OpenAI-compatible chat endpoint"),
+    ("/v1/models", "OpenAI-compatible models endpoint"),
+    ("/health", "Health check (may expose model info)"),
+    ("/metrics", "Prometheus metrics (may expose model info)"),
 ]
 
 AI_WIDGET_PATTERNS = [
@@ -106,15 +136,48 @@ AI_WIDGET_PATTERNS = [
     (r"hs-script|hubspot", "HubSpot (CRM)"),
     (r"forethought", "Forethought (AI-Support)"),
     (r"hellotars\.com|tars\.com", "Tars (AI-Chat)"),
+    (r"gorgias", "Gorgias (AI-Support)"),
+    (r"kustomer", "Kustomer (AI-Support)"),
+    (r"frontapp", "Front (AI-Support)"),
+    (r"helpshift", "Helpshift (AI-Support)"),
+    (r"freshchat|freshworks", "Freshchat (AI-Support)"),
+    (r"comm100", "Comm100 (AI-Chat)"),
+    (r"userlike", "Userlike (AI-Chat)"),
+    (r"chatwoot", "Chatwoot (AI-Support)"),
+    (r"rocket\.chat", "Rocket.Chat (AI-Chat)"),
+    (r"mattermost", "Mattermost (Chat)"),
+    (r"slack", "Slack (AI-integrations)"),
+    (r"dialogflow|agent\.google", "Dialogflow (AI-Agent)"),
+    (r"lex\.aws|aws\.lex", "AWS Lex (AI-Agent)"),
+    (r"watson\.ibm", "IBM Watson (AI-Agent)"),
+    (r"azure\.bot|botframework", "Azure Bot (AI-Agent)"),
+    (r"rasa", "Rasa (AI-Agent)"),
+    (r"botpress", "Botpress (AI-Agent)"),
+    (r"voiceflow", "Voiceflow (AI-Agent)"),
+    (r"landbot", "Landbot (AI-Chat)"),
+    (r"typebot", "Typebot (AI-Chat)"),
+    (r"customgpt", "CustomGPT (AI-Agent)"),
+    (r"chaindesk", "Chaindesk (AI-Agent)"),
+    (r"sitegpt", "SiteGPT (AI-Agent)"),
+    (r"chatbase", "Chatbase (AI-Agent)"),
+    (r"chatsimple", "ChatSimple (AI-Agent)"),
+    (r"myaskai", "MyAskAI (AI-Agent)"),
+    (r"quickchat", "Quickchat (AI-Agent)"),
 ]
 
 
-def fetch_url(url: str, timeout: int = 10) -> tuple[Optional[int], Optional[dict], Optional[str]]:
+# Thread pool for concurrent requests
+MAX_WORKERS = 10
+REQUEST_TIMEOUT = 10
+SURFACE_TIMEOUT = 5
+
+
+def fetch_url(url: str, timeout: int = REQUEST_TIMEOUT) -> tuple[Optional[int], Optional[dict], Optional[str]]:
     """GET a URL; returns (status_code, headers_dict, body_preview)."""
     req = urllib.request.Request(
         url,
         headers={
-            "User-Agent": "seb-scan/0.1 (security-assessment-tool; https://github.com/SchmeatMilk/seb)",
+            "User-Agent": "seb-scan/0.2 (security-assessment-tool; https://github.com/SchmeatMilk/seb)",
             "Accept": "text/html,application/json,*/*",
         },
     )
@@ -128,6 +191,13 @@ def fetch_url(url: str, timeout: int = 10) -> tuple[Optional[int], Optional[dict
         return e.code, dict(e.headers), None
     except (urllib.error.URLError, socket.timeout, OSError) as e:
         return None, None, None
+
+
+def fetch_url_surface(url: str) -> tuple[str, Optional[int], Optional[dict], Optional[str]]:
+    """Wrapper for concurrent surface checking - returns (path, status, headers, body)."""
+    status, headers, body = fetch_url(url, timeout=SURFACE_TIMEOUT)
+    path = urllib.parse.urlparse(url).path
+    return path, status, headers, body
 
 
 def check_security_headers(headers: dict) -> list[dict]:
@@ -155,20 +225,35 @@ def check_security_headers(headers: dict) -> list[dict]:
 
 
 def check_ai_surfaces(domain: str) -> list[dict]:
-    """Probe common AI/LLM endpoint paths."""
+    """Probe common AI/LLM endpoint paths concurrently."""
     results = []
-    for path, label in AI_SURFACES:
-        url = f"https://{domain}{path}"
-        status, headers, body = fetch_url(url, timeout=5)
-        if status and status < 400:
-            results.append({"path": path, "label": label, "status": "found",
-                            "status_code": status, "detail": (body or "")[:120]})
-        elif status and status == 403:
-            results.append({"path": path, "label": label, "status": "blocked",
-                            "status_code": 403, "detail": "Access forbidden (403)"})
-        else:
-            results.append({"path": path, "label": label, "status": "not_found",
-                            "status_code": status, "detail": ""})
+    
+    # Build URLs
+    urls = [f"https://{domain}{path}" for path, label in AI_SURFACES]
+    
+    # Concurrent fetch
+    with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
+        future_to_path = {executor.submit(fetch_url_surface, url): url for url in urls}
+        
+        # Map path to label for results
+        path_to_label = {path: label for path, label in AI_SURFACES}
+        
+        for future in as_completed(future_to_path):
+            path, status, headers, body = future.result()
+            label = path_to_label.get(path, "Unknown")
+            
+            if status and status < 400:
+                results.append({"path": path, "label": label, "status": "found",
+                                "status_code": status, "detail": (body or "")[:120]})
+            elif status and status == 403:
+                results.append({"path": path, "label": label, "status": "blocked",
+                                "status_code": 403, "detail": "Access forbidden (403)"})
+            else:
+                results.append({"path": path, "label": label, "status": "not_found",
+                                "status_code": status, "detail": ""})
+    
+    # Sort results by path for consistent output
+    results.sort(key=lambda x: x["path"])
     return results
 
 
@@ -198,39 +283,163 @@ def check_ssl(domain: str) -> dict:
         return {"status": "fail", "detail": str(e)[:100], "score": 0}
 
 
+# ── DNS Security Checks ───────────────────────────────────────────────────────
+
+def check_dns_security(domain: str) -> dict:
+    """Check DNS security records (SPF, DMARC, DKIM)."""
+    results = {
+        "spf": {"status": "not_found", "detail": "", "score": 0},
+        "dmarc": {"status": "not_found", "detail": "", "score": 0},
+        "dkim": {"status": "not_found", "detail": "", "score": 0},
+    }
+    
+    # Try dnspython first
+    try:
+        import dns.resolver
+        import dns.exception
+        
+        resolver = dns.resolver.Resolver()
+        resolver.timeout = 5
+        resolver.lifetime = 5
+        
+        # Check SPF
+        try:
+            answers = resolver.resolve(domain, 'TXT')
+            for rdata in answers:
+                txt = rdata.to_text().strip('"')
+                if "v=spf1" in txt:
+                    results["spf"] = {"status": "found", "detail": txt, "score": 10}
+                    break
+        except dns.exception.DNSException:
+            pass
+        
+        # Check DMARC
+        try:
+            answers = resolver.resolve(f"_dmarc.{domain}", 'TXT')
+            for rdata in answers:
+                txt = rdata.to_text().strip('"')
+                if "v=DMARC1" in txt:
+                    results["dmarc"] = {"status": "found", "detail": txt, "score": 10}
+                    break
+        except dns.exception.DNSException:
+            pass
+        
+        # Check DKIM (common selectors)
+        common_selectors = ["default", "google", "k1", "k2", "selector1", "selector2", "mail"]
+        for selector in common_selectors:
+            try:
+                answers = resolver.resolve(f"{selector}._domainkey.{domain}", 'TXT')
+                for rdata in answers:
+                    txt = rdata.to_text().strip('"')
+                    if "v=DKIM1" in txt:
+                        results["dkim"] = {"status": "found", "detail": f"Selector: {selector}", "score": 10}
+                        break
+                if results["dkim"]["status"] == "found":
+                    break
+            except dns.exception.DNSException:
+                continue
+                
+    except ImportError:
+        # Fallback to dig if available
+        import subprocess
+        import shutil
+        
+        if not shutil.which("dig"):
+            return results
+            
+        # Check SPF
+        try:
+            result = subprocess.run(
+                ["dig", "+short", "TXT", domain],
+                capture_output=True, text=True, timeout=5
+            )
+            for line in result.stdout.splitlines():
+                if "v=spf1" in line:
+                    results["spf"] = {"status": "found", "detail": line.strip(), "score": 10}
+                    break
+        except Exception:
+            pass
+        
+        # Check DMARC
+        try:
+            result = subprocess.run(
+                ["dig", "+short", "TXT", f"_dmarc.{domain}"],
+                capture_output=True, text=True, timeout=5
+            )
+            for line in result.stdout.splitlines():
+                if "v=DMARC1" in line:
+                    results["dmarc"] = {"status": "found", "detail": line.strip(), "score": 10}
+                    break
+        except Exception:
+            pass
+        
+        # Check DKIM (common selectors)
+        common_selectors = ["default", "google", "k1", "k2", "selector1", "selector2", "mail"]
+        for selector in common_selectors:
+            try:
+                result = subprocess.run(
+                    ["dig", "+short", "TXT", f"{selector}._domainkey.{domain}"],
+                    capture_output=True, text=True, timeout=3
+                )
+                if result.stdout.strip() and "v=DKIM1" in result.stdout:
+                    results["dkim"] = {"status": "found", "detail": f"Selector: {selector}", "score": 10}
+                    break
+            except Exception:
+                continue
+    
+    return results
+
+
 # ── Scoring ──────────────────────────────────────────────────────────────────
 
-HEADER_MAX = 60  # 6 headers × 10
+# Updated scoring with more headers
+HEADER_COUNT = 9  # 9 headers now (6 original + COOP + COEP + CORP)
+HEADER_MAX = HEADER_COUNT * 10  # 90 max
 SSL_MAX = 10
-AI_SURFACE_RISK = 15  # found surfaces increase risk score (inverted in final)
+DNS_MAX = 30  # SPF + DMARC + DKIM = 30 max
+AI_SURFACE_RISK = 20  # found surfaces increase risk score (inverted in final)
 WIDGET_BONUS = 15     # detected AI widgets
 
-MAX_SCORE = HEADER_MAX + SSL_MAX + WIDGET_BONUS  # 85 base; surfaces subtract
+MAX_SCORE = HEADER_MAX + SSL_MAX + DNS_MAX + WIDGET_BONUS  # 145 base; surfaces subtract
 
 
 def compute_score(results: dict) -> dict:
     h_score = sum(r["score"] for r in results.get("headers", []))
     ssl_score = results.get("ssl", {}).get("score", 0)
+    
+    # DNS security scoring
+    dns_score = sum(r.get("score", 0) for r in results.get("dns_security", {}).values())
 
     # AI surfaces found = higher attack surface = lower security score
     found_surfaces = [r for r in results.get("ai_surfaces", []) if r["status"] == "found"]
-    surface_penalty = min(len(found_surfaces) * 5, AI_SURFACE_RISK)
+    surface_penalty = min(len(found_surfaces) * 3, AI_SURFACE_RISK)
 
     # AI widgets detected = more AI attack surface
     widget_count = len(results.get("ai_widgets", []))
-    widget_bonus = min(widget_count * 3, WIDGET_BONUS)
+    widget_bonus = min(widget_count * 2, WIDGET_BONUS)
 
-    raw = h_score + ssl_score + widget_bonus - surface_penalty
+    raw = h_score + ssl_score + dns_score + widget_bonus - surface_penalty
     final = max(0, min(100, raw))
+
+    # Risk tier
+    if final >= 70:
+        tier = "Good"
+    elif final >= 40:
+        tier = "Moderate"
+    else:
+        tier = "High Risk"
 
     return {
         "score": final,
+        "tier": tier,
         "breakdown": {
             "security_headers": f"{h_score}/{HEADER_MAX}",
             "ssl_tls": f"{ssl_score}/{SSL_MAX}",
+            "dns_security": f"{dns_score}/{DNS_MAX}",
             "surface_penalty": f"-{surface_penalty}",
             "ai_widgets_detected": f"+{widget_bonus}",
             "total": f"{final}/100",
+            "risk_tier": tier,
         },
     }
 
@@ -272,6 +481,16 @@ def print_results(domain: str, results: dict):
     color = {"pass": _ok, "warn": _warn, "fail": _fail}.get(s["status"], _info)
     print(f"  {color(icon)} {color(s['detail'][:90])}")
 
+    # DNS Security
+    print(f"\n{BOLD}DNS Security:{RESET}")
+    for key in ["spf", "dmarc", "dkim"]:
+        dns = results["dns_security"].get(key, {})
+        icon = {"found": "✓", "not_found": "✗"}.get(dns.get("status", "not_found"), "?")
+        color = {"found": _ok, "not_found": _fail}.get(dns.get("status", "not_found"), _info)
+        label = key.upper()
+        detail = dns.get("detail", "Missing")
+        print(f"  {color(icon)} {label:20s} {color(detail[:70])}")
+
     # AI surfaces
     print(f"\n{BOLD}AI / LLM Surfaces:{RESET}")
     found = [r for r in results["ai_surfaces"] if r["status"] == "found"]
@@ -296,13 +515,14 @@ def print_results(domain: str, results: dict):
     # Score
     print(f"\n{BOLD}{'='*50}{RESET}")
     score = results["score"]
+    tier = results.get("score_breakdown", {}).get("tier", "Unknown")
     if score >= 70:
         score_color = _ok
     elif score >= 40:
         score_color = _warn
     else:
         score_color = _fail
-    print(f"  {BOLD}Risk Score:{RESET}  {score_color(f'{score}/100')}")
+    print(f"  {BOLD}Risk Score:{RESET}  {score_color(f'{score}/100')}  {BOLD}Tier:{RESET} {score_color(tier)}")
     for k, v in results["score_breakdown"]["breakdown"].items():
         print(f"    {k:25s} {v}")
     print()
@@ -330,6 +550,7 @@ def scan(domain: str, quick: bool = False) -> dict:
         "scanner": f"seb v{__version__}",
         "headers": check_security_headers(headers) if headers else [],
         "ssl": check_ssl(domain),
+        "dns_security": check_dns_security(domain),
         "ai_surfaces": check_ai_surfaces(domain) if not quick else [],
         "ai_widgets": check_ai_widgets(body) if body else [],
         "homepage_status": status,

@@ -4,12 +4,15 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "seb-scan"
-version = "0.1.0"
+version = "0.2.0"
 description = "Secure Environment Basics — CLI domain risk scanner for AI-security surface assessment"
 readme = "README.md"
 license = {text = "MIT"}
 requires-python = ">=3.10"
 authors = [{name = "SEB (Security Inquisitor Balance)", email = "mbaptiste20@gmail.com"}]
+dependencies = [
+    "dnspython>=2.8.0",
+]
 
 [project.scripts]
 seb = "seb:main"
